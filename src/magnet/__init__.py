@@ -40,7 +40,7 @@ def _suppress_pydantic_deprecation_warnings() -> None:
 
 _suppress_pydantic_deprecation_warnings()
 
-__version__ = "0.201.1"
+__version__ = "0.0.1"
 _telemetry_submitted = False
 
 
@@ -70,7 +70,7 @@ def _track_install_async() -> None:
         thread.start()
 
 
-_track_install_async()
+#_track_install_async()
 __all__ = [
     "LLM",
     "Agent",

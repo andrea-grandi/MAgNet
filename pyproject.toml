@@ -37,4 +37,9 @@ dependencies = [
     "json5>=0.10.0",
     "portalocker==2.7.0",
     "pydantic-settings>=2.10.1",
+    "langchain>=0.3.27",
+    "sec-api>=1.0.32",
+    "embedchain[models]>=0.0.18",
+    "langchain-community>=0.3.30",
+    "html2text>=2025.4.15",
 ]

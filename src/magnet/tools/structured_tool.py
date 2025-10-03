@@ -3,13 +3,11 @@ from __future__ import annotations
 import asyncio
 import inspect
 import textwrap
+
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any, get_type_hints
-
 from pydantic import BaseModel, Field, create_model
-
 from magnet.utilities.logger import Logger
-
 if TYPE_CHECKING:
     from magnet.tools.base_tool import BaseTool
 

@@ -1,20 +1,18 @@
-"""JSON encoder for handling NetAI specific types."""
-
 import json
+
 from datetime import date, datetime
 from decimal import Decimal
 from enum import Enum
 from typing import Any
 from uuid import UUID
-
 from pydantic import BaseModel
 
 
 class NetJSONEncoder(json.JSONEncoder):
-    """Custom JSON encoder for NetAI objects and special types."""
+    """Custom JSON encoder for objects and special types."""
 
     def default(self, obj: Any) -> Any:
-        """Custom serialization for NetAI specific types.
+        """Custom serialization for specific types.
 
         Args:
             obj: The object to serialize.

@@ -6,7 +6,7 @@ from typing import Any
 
 from magnet.task import Task
 from magnet.utilities import Printer
-from magnet.utilities.net_json_encoder import netJSONEncoder
+from magnet.utilities.net_json_encoder import NetJSONEncoder
 from magnet.utilities.errors import DatabaseError, DatabaseOperationError
 from magnet.utilities.paths import db_storage_path
 

@@ -9,10 +9,10 @@ from rich.panel import Panel
 
 from magnet.cli.authentication.token import AuthError, get_auth_token
 from magnet.cli.plus_api import PlusAPI
-from magnet.cli.version import get_crewai_version
+from magnet.cli.version import get_magnet_version
 from magnet.events.listeners.tracing.types import TraceEvent
 from magnet.events.listeners.tracing.utils import should_auto_collect_first_time_traces
-from magnet.utilities.constants import CREWAI_BASE_URL
+from magnet.utilities.constants import MAGNET_BASE_URL
 
 logger = getLogger(__name__)
 
@@ -21,7 +21,7 @@ logger = getLogger(__name__)
 class TraceBatch:
     """Batch of events to send to backend"""
 
-    version: str = field(default_factory=get_crewai_version)
+    version: str = field(default_factory=get_magnet_version)
     batch_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     user_context: dict[str, str] = field(default_factory=dict)
     execution_metadata: dict[str, Any] = field(default_factory=dict)
@@ -100,10 +100,10 @@ class TraceBatchManager:
                 "execution_type": execution_metadata.get("execution_type", "net"),
                 "user_identifier": execution_metadata.get("user_context", None),
                 "execution_context": {
-                    "crew_fingerprint": execution_metadata.get("crew_fingerprint"),
-                    "crew_name": execution_metadata.get("crew_name", None),
+                    "magnet_fingerprint": execution_metadata.get("magnet_fingerprint"),
+                    "magnet_name": execution_metadata.get("magnet_name", None),
                     "flow_name": execution_metadata.get("flow_name", None),
-                    "crewai_version": self.current_batch.version,
+                    "magnet_version": self.current_batch.version,
                     "privacy_level": user_context.get("privacy_level", "standard"),
                 },
                 "execution_metadata": {
@@ -246,9 +246,9 @@ class TraceBatchManager:
                 access_code = response.json().get("access_code", None)
                 console = Console()
                 return_link = (
-                    f"{CREWAI_BASE_URL}/crewai_plus/trace_batches/{self.trace_batch_id}"
+                    f"{MAGNET_BASE_URL}/magnet_plus/trace_batches/{self.trace_batch_id}"
                     if not self.is_current_batch_ephemeral and access_code is None
-                    else f"{CREWAI_BASE_URL}/crewai_plus/ephemeral_trace_batches/{self.trace_batch_id}?access_code={access_code}"
+                    else f"{MAGNET_BASE_URL}/magnet_plus/ephemeral_trace_batches/{self.trace_batch_id}?access_code={access_code}"
                 )
 
                 if self.is_current_batch_ephemeral:

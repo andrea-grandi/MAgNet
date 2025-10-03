@@ -3,7 +3,7 @@ import uuid
 from typing import Any, ClassVar
 
 from magnet.cli.authentication.token import AuthError, get_auth_token
-from magnet.cli.version import get_crewai_version
+from magnet.cli.version import get_magnet_version
 from magnet.events.base_event_listener import BaseEventListener
 from magnet.events.listeners.tracing.first_time_trace_handler import (
     FirstTimeTraceHandler,
@@ -18,10 +18,10 @@ from magnet.events.types.agent_events import (
     LiteAgentExecutionErrorEvent,
     LiteAgentExecutionStartedEvent,
 )
-from magnet.events.types.crew_events import (
-    CrewKickoffCompletedEvent,
-    CrewKickoffFailedEvent,
-    CrewKickoffStartedEvent,
+from magnet.events.types.net_events import (
+    NetKickoffCompletedEvent,
+    NetKickoffFailedEvent,
+    NetKickoffStartedEvent,
 )
 from magnet.events.types.flow_events import (
     FlowCreatedEvent,
@@ -178,15 +178,15 @@ class TraceCollectionListener(BaseEventListener):
     def _register_context_event_handlers(self, event_bus):
         """Register handlers for context events (start/end)"""
 
-        @event_bus.on(CrewKickoffStartedEvent)
-        def on_crew_started(source, event):
+        @event_bus.on(NetKickoffStartedEvent)
+        def on_net_started(source, event):
             if not self.batch_manager.is_batch_initialized():
-                self._initialize_crew_batch(source, event)
-            self._handle_trace_event("crew_kickoff_started", source, event)
+                self._initialize_net_batch(source, event)
+            self._handle_trace_event("net_kickoff_started", source, event)
 
-        @event_bus.on(CrewKickoffCompletedEvent)
-        def on_crew_completed(source, event):
-            self._handle_trace_event("crew_kickoff_completed", source, event)
+        @event_bus.on(NetKickoffCompletedEvent)
+        def on_net_completed(source, event):
+            self._handle_trace_event("net_kickoff_completed", source, event)
             if self.batch_manager.batch_owner_type == "net":
                 if self.first_time_handler.is_first_time:
                     self.first_time_handler.mark_events_collected()
@@ -194,9 +194,9 @@ class TraceCollectionListener(BaseEventListener):
                 else:
                     self.batch_manager.finalize_batch()
 
-        @event_bus.on(CrewKickoffFailedEvent)
-        def on_crew_failed(source, event):
-            self._handle_trace_event("crew_kickoff_failed", source, event)
+        @event_bus.on(NetKickoffFailedEvent)
+        def on_net_failed(source, event):
+            self._handle_trace_event("net_kickoff_failed", source, event)
             if self.first_time_handler.is_first_time:
                 self.first_time_handler.mark_events_collected()
                 self.first_time_handler.handle_execution_completion()
@@ -310,13 +310,13 @@ class TraceCollectionListener(BaseEventListener):
         def on_agent_reasoning_failed(source, event):
             self._handle_action_event("agent_reasoning_failed", source, event)
 
-    def _initialize_crew_batch(self, source: Any, event: Any):
+    def _initialize_net_batch(self, source: Any, event: Any):
         """Initialize trace batch"""
         user_context = self._get_user_context()
         execution_metadata = {
-            "crew_name": getattr(event, "crew_name", "Unknown Net"),
+            "net_name": getattr(event, "net_name", "Unknown Net"),
             "execution_start": event.timestamp if hasattr(event, "timestamp") else None,
-            "crewai_version": get_crewai_version(),
+            "magnet_version": get_magnet_version(),
         }
 
         self.batch_manager.batch_owner_type = "net"
@@ -330,7 +330,7 @@ class TraceCollectionListener(BaseEventListener):
         execution_metadata = {
             "flow_name": getattr(event, "flow_name", "Unknown Flow"),
             "execution_start": event.timestamp if hasattr(event, "timestamp") else None,
-            "crewai_version": get_crewai_version(),
+            "magnet_version": get_magnet_version(),
             "execution_type": "flow",
         }
 
@@ -367,8 +367,8 @@ class TraceCollectionListener(BaseEventListener):
         if not self.batch_manager.is_batch_initialized():
             user_context = self._get_user_context()
             execution_metadata = {
-                "crew_name": getattr(source, "name", "Unknown Net"),
-                "crewai_version": get_crewai_version(),
+                "net_name": getattr(source, "name", "Unknown Net"),
+                "magnet_version": get_magnet_version(),
             }
             self.batch_manager.initialize_batch(user_context, execution_metadata)
 

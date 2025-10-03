@@ -29,4 +29,4 @@ NOT_SPECIFIED: Final[
         "allows us to distinguish between 'not passed at all' and 'explicitly passed None' or '[]'.",
     ]
 ] = _NotSpecified()
-CREWAI_BASE_URL: Final[str] = "https://app.magnet.com"
+MAGNET_BASE_URL: Final[str] = "https://app.magnet.com"

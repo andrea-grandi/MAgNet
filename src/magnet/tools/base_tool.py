@@ -1,9 +1,9 @@
 import asyncio
+
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 from inspect import signature
 from typing import Any, get_args, get_origin
-
 from pydantic import (
     BaseModel,
     ConfigDict,
@@ -12,7 +12,6 @@ from pydantic import (
     field_validator,
 )
 from pydantic import BaseModel as PydanticBaseModel
-
 from magnet.tools.structured_tool import NetStructuredTool
 
 

@@ -2,14 +2,13 @@ import ast
 import datetime
 import json
 import time
+import json5
+
 from difflib import SequenceMatcher
 from json import JSONDecodeError
 from textwrap import dedent
 from typing import TYPE_CHECKING, Any, Union
-
-import json5
 from json_repair import repair_json  # type: ignore[import-untyped,import-error]
-
 from magnet.agents.tools_handler import ToolsHandler
 from magnet.events.event_bus import magnet_event_bus
 from magnet.events.types.tool_usage_events import (
@@ -28,7 +27,6 @@ from magnet.utilities.agent_utils import (
     get_tool_names,
     render_text_description_and_args,
 )
-
 if TYPE_CHECKING:
     from magnet.agents.agent_builder.base_agent import BaseAgent
     from magnet.lite_agent import LiteAgent
