@@ -5,41 +5,5 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    # Core Dependencies
-    "pydantic>=2.11.9",
-    "openai>=1.13.3",
-    "litellm==1.74.9",
-    "instructor>=1.3.3",
-    # Text Processing
-    "pdfplumber>=0.11.4",
-    "regex>=2024.9.11",
-    # Telemetry and Monitoring
-    "opentelemetry-api>=1.30.0",
-    "opentelemetry-sdk>=1.30.0",
-    "opentelemetry-exporter-otlp-proto-http>=1.30.0",
-    # Data Handling
-    "chromadb~=1.1.0",
-    "tokenizers>=0.20.3",
-    "openpyxl>=3.1.5",
-    "pyvis>=0.3.2",
-    # Authentication and Security
-    "python-dotenv>=1.1.1",
-    "pyjwt>=2.9.0",
-    # Configuration and Utils
-    "click>=8.1.7",
-    "appdirs>=1.4.4",
-    "jsonref>=1.1.0",
-    "json-repair==0.25.2",
-    "uv>=0.4.25",
-    "tomli-w>=1.1.0",
-    "tomli>=2.0.2",
-    "blinker>=1.9.0",
-    "json5>=0.10.0",
-    "portalocker==2.7.0",
-    "pydantic-settings>=2.10.1",
-    "langchain>=0.3.27",
-    "sec-api>=1.0.32",
-    "embedchain[models]>=0.0.18",
-    "langchain-community>=0.3.30",
-    "html2text>=2025.4.15",
+    "crewai[tools]>=0.201.1",
 ]
