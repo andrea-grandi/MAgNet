@@ -3,5 +3,5 @@
     "graphs": {
       "agent": "./logic/graph.py:graph"
     },
-    "env": ".env"
+    "env": "../../../.env"
   }

@@ -1,7 +1,7 @@
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 
-from magnet.configs.llm_config import *
+from .config import CHAT_AGENT_CONFIG, CHAT_AGENT_SYSTEM_PROMPT
 
 
 llm = ChatOpenAI(**CHAT_AGENT_CONFIG)

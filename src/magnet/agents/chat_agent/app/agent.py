@@ -2,13 +2,6 @@ from typing import Any, AsyncGenerator, Dict
 
 from langchain_core.messages import BaseMessage, HumanMessage
 
-import sys
-from pathlib import Path
-
-# Add logic directory to path
-logic_path = Path(__file__).parent.parent / "logic"
-sys.path.insert(0, str(logic_path))
-
 from logic import nodes
 from logic.state import AgentState
 
