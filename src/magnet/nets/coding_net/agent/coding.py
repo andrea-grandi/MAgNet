@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from langchain_core.runnables import RunnableConfig
 from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
-from magnet.swarm import create_handoff_tool, create_swarm
+from langgraph_swarm import create_handoff_tool, create_swarm
 
 load_dotenv()
 
