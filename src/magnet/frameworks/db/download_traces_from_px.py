@@ -1,5 +1,5 @@
 import dotenv
-from database import save_df_to_db
+from .database import save_df_to_db
 
 import phoenix as px
 
@@ -7,7 +7,7 @@ dotenv.load_dotenv()
 
 
 def save_traces_to_db():
-    df = px.Client().get_trace_dataset()
+    df = px.Client().get_trace_dataset() # type: ignore
     save_df_to_db(df.dataframe)
 
 

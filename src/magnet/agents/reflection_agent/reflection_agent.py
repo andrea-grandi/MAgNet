@@ -2,11 +2,11 @@ from colorama import Fore
 from dotenv import load_dotenv
 from openai import OpenAI
 
-from agents.utils.completions import build_prompt_structure
-from agents.utils.completions import completions_create
-from agents.utils.completions import FixedFirstChatHistory
-from agents.utils.completions import update_chat_history
-from agents.utils.logging import custom_step_tracker
+from magnet.agents.utils.completions import build_prompt_structure
+from magnet.agents.utils.completions import completions_create
+from magnet.agents.utils.completions import FixedFirstChatHistory
+from magnet.agents.utils.completions import update_chat_history
+from magnet.agents.utils.logging import custom_step_tracker
 
 load_dotenv()
 

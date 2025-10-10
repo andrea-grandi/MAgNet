@@ -1,20 +1,18 @@
-import os
-import sys
-
 # Add project root to path
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../..'))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
+#project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../..'))
+#if project_root not in sys.path:
+#    sys.path.insert(0, project_root)
 
 from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
-from magnet.frameworks.langgraph.analyze_data import data_analyzer
 from langgraph.checkpoint.memory import MemorySaver
-from magnet.frameworks.langgraph.generate_sql_query import generate_and_run_sql_query
 from langgraph.graph import END, START, MessagesState, StateGraph
 from langgraph.prebuilt import ToolNode
+
+from magnet.frameworks.langgraph.generate_sql_query import generate_and_run_sql_query
 from magnet.frameworks.prompt_templates.router_template import SYSTEM_PROMPT
+from magnet.frameworks.langgraph.analyze_data import data_analyzer
 
 load_dotenv()
 

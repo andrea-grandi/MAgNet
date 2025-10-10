@@ -1,9 +1,8 @@
 from collections import deque
-
 from colorama import Fore
 from graphviz import Digraph  # type: ignore
 
-from agents.utils.logging import custom_print
+from magnet.agents.utils.logging import custom_print
 
 
 class Crew:

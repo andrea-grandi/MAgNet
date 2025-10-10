@@ -5,13 +5,13 @@ from colorama import Fore
 from dotenv import load_dotenv
 from openai import OpenAI
 
-from agents.tool_agent.tool import Tool
-from agents.tool_agent.tool import validate_arguments
-from agents.utils.completions import build_prompt_structure
-from agents.utils.completions import ChatHistory
-from agents.utils.completions import completions_create
-from agents.utils.completions import update_chat_history
-from agents.utils.extraction import extract_tag_content
+from magnet.agents.tool_agent.tool import Tool
+from magnet.agents.tool_agent.tool import validate_arguments
+from magnet.agents.utils.completions import build_prompt_structure
+from magnet.agents.utils.completions import ChatHistory
+from magnet.agents.utils.completions import completions_create
+from magnet.agents.utils.completions import update_chat_history
+from magnet.agents.utils.extraction import extract_tag_content
 
 load_dotenv()
 

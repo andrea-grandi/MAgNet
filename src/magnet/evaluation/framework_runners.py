@@ -1,19 +1,17 @@
 import time
 import psutil
 import os
-import sys
-from typing import Dict, List, Any, Optional
 import traceback
 
+from typing import Dict, List, Any, Optional
+
 # Add project paths
-project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(project_root)
-sys.path.append(os.path.join(project_root, "agents"))
+#project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+#sys.path.append(project_root)
+#sys.path.append(os.path.join(project_root, "agents"))
+#sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-import sys, os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from evaluation.task_definitions import TaskDefinition
+from magnet.evaluation.task_definitions import TaskDefinition
 
 
 class BaseFrameworkRunner:

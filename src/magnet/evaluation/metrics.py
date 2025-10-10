@@ -13,10 +13,11 @@ This module implements the standard evaluation metrics for multi-agent planning 
 import time
 import json
 import math
+import numpy as np
+
 from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass
 from enum import Enum
-import numpy as np
 
 
 class MetricType(Enum):

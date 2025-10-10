@@ -1,8 +1,8 @@
 from textwrap import dedent
 
-from agents.multi_agent.crew import Crew
-from agents.planning_agent.react_agent import ReactAgent
-from agents.tool_agent.tool import Tool
+from magnet.agents.multi_agent.crew import Crew
+from magnet.agents.planning_agent.react_agent import ReactAgent
+from magnet.agents.tool_agent.tool import Tool
 
 
 class Agent:

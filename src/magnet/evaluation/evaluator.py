@@ -8,11 +8,12 @@ performance across different frameworks and tasks.
 import time
 import json
 import os
-from typing import Dict, List, Any, Optional, Callable
-from dataclasses import dataclass, field
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+
+from typing import Dict, List, Any, Optional, Callable
+from dataclasses import dataclass, field
 
 from .metrics import (
     PlanningQualityMetrics,
@@ -28,7 +29,7 @@ from .task_definitions import TaskDefinition, TaskResult, TASK_DEFINITIONS
 @dataclass
 class EvaluationConfig:
     """Configuration for evaluation runs"""
-    frameworks: List[str] = field(default_factory=lambda: ["langgraph", "autogen", "crewai", "swarm"])
+    frameworks: List[str] = field(default_factory=lambda: ["langgraph"])
     tasks: List[str] = field(default_factory=lambda: list(TASK_DEFINITIONS.keys()))
     num_runs: int = 3
     timeout_seconds: int = 300
@@ -221,7 +222,7 @@ class BenchmarkEvaluator:
     
     def run_benchmark(self, framework_runners: Dict[str, Callable]) -> Dict[str, List[TaskResult]]:
         """Run the complete benchmark"""
-        print("Starting REALM-Bench evaluation...")
+        print("Starting evaluation...")
         
         for framework in self.config.frameworks:
             if framework not in framework_runners:
@@ -330,7 +331,7 @@ class BenchmarkEvaluator:
         # Set up the plotting style
         plt.style.use('seaborn-v0_8')
         fig, axes = plt.subplots(2, 3, figsize=(18, 12))
-        fig.suptitle('REALM-Bench Evaluation Results', fontsize=16)
+        fig.suptitle('Evaluation Results', fontsize=16)
         
         # 1. Goal Satisfaction Rate by Framework
         sns.boxplot(data=df, x='framework', y='goal_satisfaction_rate', ax=axes[0, 0])
