@@ -1,0 +1,31 @@
+{
+  "timestamp": "2025-10-10 14:59:55",
+  "config": {
+    "frameworks": [
+      "langgraph"
+    ],
+    "tasks": [
+      "P11",
+      "P1",
+      "P2",
+      "P3",
+      "P4",
+      "P5",
+      "P6",
+      "P7",
+      "P8",
+      "P9",
+      "P10"
+    ],
+    "num_runs": 3
+  },
+  "results": {
+    "langgraph": {
+      "total_tasks": 11,
+      "average_execution_time": 1.0048622145797266,
+      "average_goal_satisfaction": 65.15151515151513,
+      "average_constraint_satisfaction": 0.0,
+      "average_makespan": 30.0
+    }
+  }
+}

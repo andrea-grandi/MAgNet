@@ -2,6 +2,7 @@ import time
 import psutil
 import os
 import traceback
+import json
 
 from typing import Dict, List, Any, Optional
 
@@ -37,13 +38,16 @@ class BaseFrameworkRunner:
             self.token_usage[framework] = 0
         self.token_usage[framework] += tokens
     
-    def _create_execution_result(self, 
-                               achieved_goals: List[str],
-                               satisfied_constraints: List[str],
-                               schedule: List[Dict[str, Any]],
-                               disruptions_handled: Optional[List[Dict[str, Any]]] = None,
-                               replanning_attempts: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
+    def _create_execution_result(
+        self, 
+        achieved_goals: List[str],
+        satisfied_constraints: List[str],
+        schedule: List[Dict[str, Any]],
+        disruptions_handled: Optional[List[Dict[str, Any]]] = None,
+        replanning_attempts: Optional[List[Dict[str, Any]]] = None
+    ) -> Dict[str, Any]:
         """Create standardized execution result"""
+
         return {
             'achieved_goals': achieved_goals,
             'satisfied_constraints': satisfied_constraints,
@@ -65,9 +69,7 @@ class LangGraphRunner(BaseFrameworkRunner):
         super().__init__()
         try:
             # Import the router function from langgraph
-            import sys
-            import os
-            sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'frameworks', 'langgraph'))
+            #sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'frameworks', 'langgraph'))
             from magnet.frameworks.langgraph.router import run_agent
             self.run_agent = run_agent
         except ImportError as e:
@@ -144,13 +146,174 @@ class LangGraphRunner(BaseFrameworkRunner):
         elif 'output' in result and isinstance(result['output'], dict) and 'schedule' in result['output']:
             schedule = result['output']['schedule']
         return schedule
+    
 
-
-
+class CrewAIRunner(BaseFrameworkRunner):
+    """Runner for CrewAI framework"""
+    
+    def __init__(self):
+        super().__init__()
+        try:
+            # Import the router function from crewai
+            #sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'agent_frameworks', 'crewai_multi_agent'))
+            from magnet.frameworks.crewai_multi_agent.router import run_crewai
+            self.run_crewai = run_crewai
+        except ImportError as e:
+            print(f"Warning: CrewAI not available: {e}")
+            self.run_crewai = None
+    
+    def __call__(self, task_definition: TaskDefinition) -> Dict[str, Any]:
+        """Execute task using CrewAI"""
+        if not self.run_crewai:
+            raise RuntimeError("CrewAI framework not available")
+        
+        start_time = time.time()
+        self._record_memory_usage()
+        
+        try:
+            # Create task description for CrewAI
+            task_description = f"""
+            Task: {task_definition.description}
+            Goals: {[goal.description for goal in task_definition.goals]}
+            Constraints: {[c.description for c in task_definition.constraints]}
+            Resources: {task_definition.resources}
+            """
+            
+            # Execute the crew
+            result = self.run_crewai(task_description)
+            
+            execution_time = time.time() - start_time
+            self.execution_times.append(execution_time)
+            self._record_memory_usage()
+            
+            # Extract results from CrewAI output (result is a string)
+            achieved_goals = self._extract_achieved_goals(result, task_definition)
+            satisfied_constraints = self._extract_satisfied_constraints(result, task_definition)
+            schedule = self._extract_schedule(result)
+            
+            return self._create_execution_result(
+                achieved_goals=achieved_goals,
+                satisfied_constraints=satisfied_constraints,
+                schedule=schedule
+            )
+            
+        except Exception as e:
+            print(f"CrewAI execution error: {str(e)}")
+            traceback.print_exc()
+            return self._create_execution_result([], [], [])
+    
+    def _extract_achieved_goals(self, result: str, task_definition: TaskDefinition) -> List[str]:
+        """Extract achieved goals from CrewAI result string"""
+        achieved_goals = []
+        
+        # Try to parse JSON if the result is JSON formatted
+        try:
+            result_dict = json.loads(result)
+            # Check for various possible keys
+            for key in ['goals_achieved', 'goals', 'Achieved Goals', 'Goals Achieved', 
+                       'achieved_goals', 'GoalsAchieved']:
+                if key in result_dict:
+                    goals_list = result_dict[key]
+                    # Handle both list of IDs and list of descriptions
+                    if isinstance(goals_list, list):
+                        for goal_item in goals_list:
+                            # Try to match the goal description to a goal ID
+                            for goal in task_definition.goals:
+                                if isinstance(goal_item, str):
+                                    # Check if it's the ID or the description matches
+                                    if (goal.goal_id.lower() == goal_item.lower() or 
+                                        goal.description.lower() == goal_item.lower() or
+                                        goal.description.lower() in goal_item.lower()):
+                                        if goal.goal_id not in achieved_goals:
+                                            achieved_goals.append(goal.goal_id)
+                    break
+        except (json.JSONDecodeError, TypeError):
+            # Result is plain text, try to match goals based on keywords
+            result_lower = result.lower() if isinstance(result, str) else ""
+            for goal in task_definition.goals:
+                # Check if goal description or ID appears in the result
+                if goal.goal_id.lower() in result_lower or goal.description.lower() in result_lower:
+                    achieved_goals.append(goal.goal_id)
+                else:
+                    # Also check for partial matches with key terms from the goal
+                    # Extract key terms (words longer than 3 chars, excluding common words)
+                    common_words = {'the', 'and', 'for', 'from', 'with', 'all', 'are', 'this', 'that', 'have'}
+                    goal_terms = [word for word in goal.description.lower().split() 
+                                 if len(word) > 3 and word not in common_words]
+                    # If at least 50% of key terms appear in the result, consider it achieved
+                    if goal_terms:
+                        matches = sum(1 for term in goal_terms if term in result_lower)
+                        if matches / len(goal_terms) >= 0.5:
+                            achieved_goals.append(goal.goal_id)
+        
+        return achieved_goals
+    
+    def _extract_satisfied_constraints(self, result: str, task_definition: TaskDefinition) -> List[str]:
+        """Extract satisfied constraints from CrewAI result string"""
+        satisfied_constraints = []
+        
+        # Try to parse JSON if the result is JSON formatted
+        try:
+            result_dict = json.loads(result)
+            # Check for various possible keys
+            for key in ['constraints_satisfied', 'constraints', 'Satisfied Constraints', 
+                       'Constraints Satisfied', 'satisfied_constraints', 'ConstraintsSatisfied']:
+                if key in result_dict:
+                    constraints_list = result_dict[key]
+                    # Handle both list of IDs and list of descriptions
+                    if isinstance(constraints_list, list):
+                        for constraint_item in constraints_list:
+                            # Try to match the constraint description to a constraint ID
+                            for constraint in task_definition.constraints:
+                                if isinstance(constraint_item, str):
+                                    # Check if it's the ID or the description matches
+                                    if (constraint.constraint_id.lower() == constraint_item.lower() or 
+                                        constraint.description.lower() == constraint_item.lower() or
+                                        constraint.description.lower() in constraint_item.lower()):
+                                        if constraint.constraint_id not in satisfied_constraints:
+                                            satisfied_constraints.append(constraint.constraint_id)
+                    break
+        except (json.JSONDecodeError, TypeError):
+            # Result is plain text, try to match constraints based on keywords
+            result_lower = result.lower() if isinstance(result, str) else ""
+            for constraint in task_definition.constraints:
+                # Check if constraint description or ID appears in the result
+                if constraint.constraint_id.lower() in result_lower or constraint.description.lower() in result_lower:
+                    satisfied_constraints.append(constraint.constraint_id)
+                else:
+                    # Also check for partial matches with key terms from the constraint
+                    # Extract key terms (words longer than 3 chars, excluding common words)
+                    common_words = {'the', 'and', 'for', 'from', 'with', 'all', 'are', 'this', 'that', 'have'}
+                    constraint_terms = [word for word in constraint.description.lower().split() 
+                                       if len(word) > 3 and word not in common_words]
+                    # If at least 50% of key terms appear in the result, consider it satisfied
+                    if constraint_terms:
+                        matches = sum(1 for term in constraint_terms if term in result_lower)
+                        if matches / len(constraint_terms) >= 0.5:
+                            satisfied_constraints.append(constraint.constraint_id)
+        
+        return satisfied_constraints
+    
+    def _extract_schedule(self, result: str) -> List[Dict[str, Any]]:
+        """Extract schedule from CrewAI result string"""
+        schedule = []
+        
+        # Try to parse JSON if the result is JSON formatted
+        try:
+            result_dict = json.loads(result)
+            if 'schedule' in result_dict:
+                schedule = result_dict['schedule']
+        except (json.JSONDecodeError, TypeError):
+            # Result is plain text, cannot extract structured schedule
+            # Return empty schedule for now
+            pass
+        
+        return schedule
 
 
 def get_framework_runners() -> Dict[str, BaseFrameworkRunner]:
     """Get all available framework runners"""
+
     runners = {}
     
     # Try to initialize each framework runner
@@ -158,9 +321,13 @@ def get_framework_runners() -> Dict[str, BaseFrameworkRunner]:
         runners['langgraph'] = LangGraphRunner()
     except Exception as e:
         print(f"LangGraph runner not available: {e}")
+
+    try:
+        runners['crewai'] = CrewAIRunner()
+    except Exception as e:
+        print(f"CrewAI runner not available: {e}")
     
     return runners
-
 
 def create_mock_runner(framework_name: str) -> BaseFrameworkRunner:
     """Create a mock runner for testing when frameworks are not available"""

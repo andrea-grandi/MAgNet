@@ -1,0 +1,321 @@
+[
+  {
+    "task_id": "P11",
+    "framework": "langgraph",
+    "execution_time": 8.407114346822103,
+    "achieved_goals": [
+      "Task completed based on agent response"
+    ],
+    "satisfied_constraints": [
+      "Constraints considered in planning"
+    ],
+    "resource_usage": {
+      "memory_usage": [
+        {
+          "memory_mb": 359.40625,
+          "timestamp": 1760103755.062009
+        },
+        {
+          "memory_mb": 360.703125,
+          "timestamp": 1760103765.158123
+        },
+        {
+          "memory_mb": 360.703125,
+          "timestamp": 1760103765.158559
+        },
+        {
+          "memory_mb": 360.84375,
+          "timestamp": 1760103772.9350212
+        },
+        {
+          "memory_mb": 360.84375,
+          "timestamp": 1760103772.935328
+        },
+        {
+          "memory_mb": 360.875,
+          "timestamp": 1760103780.283042
+        },
+        {
+          "memory_mb": 360.875,
+          "timestamp": 1760103780.283475
+        },
+        {
+          "memory_mb": 356.578125,
+          "timestamp": 1760103786.552707
+        },
+        {
+          "memory_mb": 356.578125,
+          "timestamp": 1760103786.552993
+        },
+        {
+          "memory_mb": 356.53125,
+          "timestamp": 1760103790.7509818
+        },
+        {
+          "memory_mb": 356.53125,
+          "timestamp": 1760103790.7512589
+        },
+        {
+          "memory_mb": 309.5,
+          "timestamp": 1760103794.704422
+        },
+        {
+          "memory_mb": 309.5,
+          "timestamp": 1760103794.70467
+        },
+        {
+          "memory_mb": 309.5625,
+          "timestamp": 1760103802.528579
+        },
+        {
+          "memory_mb": 309.5625,
+          "timestamp": 1760103802.528909
+        },
+        {
+          "memory_mb": 310.921875,
+          "timestamp": 1760103844.183622
+        },
+        {
+          "memory_mb": 310.921875,
+          "timestamp": 1760103844.183959
+        },
+        {
+          "memory_mb": 310.984375,
+          "timestamp": 1760103851.7327292
+        }
+      ],
+      "execution_times": [
+        10.095755100250244,
+        7.776228189468384,
+        7.3475611209869385,
+        6.268968105316162,
+        4.1977760791778564,
+        3.9530587196350098,
+        7.823579788208008,
+        41.654521226882935,
+        7.54843282699585
+      ],
+      "token_usage": {}
+    },
+    "metrics": {
+      "goal_satisfaction_rate": 0.0,
+      "makespan": 0.0,
+      "constraint_satisfaction_rate": 0.0,
+      "memory_usage": 360.8072916666667,
+      "execution_time": 17.72909426689148,
+      "token_usage": 0.0
+    }
+  },
+  {
+    "task_id": "P1",
+    "framework": "langgraph",
+    "execution_time": 4.807033697764079,
+    "achieved_goals": [],
+    "satisfied_constraints": [
+      "Constraints considered in planning"
+    ],
+    "resource_usage": {
+      "memory_usage": [
+        {
+          "memory_mb": 359.40625,
+          "timestamp": 1760103755.062009
+        },
+        {
+          "memory_mb": 360.703125,
+          "timestamp": 1760103765.158123
+        },
+        {
+          "memory_mb": 360.703125,
+          "timestamp": 1760103765.158559
+        },
+        {
+          "memory_mb": 360.84375,
+          "timestamp": 1760103772.9350212
+        },
+        {
+          "memory_mb": 360.84375,
+          "timestamp": 1760103772.935328
+        },
+        {
+          "memory_mb": 360.875,
+          "timestamp": 1760103780.283042
+        },
+        {
+          "memory_mb": 360.875,
+          "timestamp": 1760103780.283475
+        },
+        {
+          "memory_mb": 356.578125,
+          "timestamp": 1760103786.552707
+        },
+        {
+          "memory_mb": 356.578125,
+          "timestamp": 1760103786.552993
+        },
+        {
+          "memory_mb": 356.53125,
+          "timestamp": 1760103790.7509818
+        },
+        {
+          "memory_mb": 356.53125,
+          "timestamp": 1760103790.7512589
+        },
+        {
+          "memory_mb": 309.5,
+          "timestamp": 1760103794.704422
+        },
+        {
+          "memory_mb": 309.5,
+          "timestamp": 1760103794.70467
+        },
+        {
+          "memory_mb": 309.5625,
+          "timestamp": 1760103802.528579
+        },
+        {
+          "memory_mb": 309.5625,
+          "timestamp": 1760103802.528909
+        },
+        {
+          "memory_mb": 310.921875,
+          "timestamp": 1760103844.183622
+        },
+        {
+          "memory_mb": 310.921875,
+          "timestamp": 1760103844.183959
+        },
+        {
+          "memory_mb": 310.984375,
+          "timestamp": 1760103851.7327292
+        }
+      ],
+      "execution_times": [
+        10.095755100250244,
+        7.776228189468384,
+        7.3475611209869385,
+        6.268968105316162,
+        4.1977760791778564,
+        3.9530587196350098,
+        7.823579788208008,
+        41.654521226882935,
+        7.54843282699585
+      ],
+      "token_usage": {}
+    },
+    "metrics": {
+      "goal_satisfaction_rate": 0.0,
+      "makespan": 0.0,
+      "constraint_satisfaction_rate": 0.0,
+      "memory_usage": 360.875,
+      "execution_time": 35.60471614201864,
+      "token_usage": 0.0
+    }
+  },
+  {
+    "task_id": "P2",
+    "framework": "langgraph",
+    "execution_time": 19.009445269902546,
+    "achieved_goals": [
+      "Task completed based on agent response"
+    ],
+    "satisfied_constraints": [
+      "Constraints considered in planning"
+    ],
+    "resource_usage": {
+      "memory_usage": [
+        {
+          "memory_mb": 359.40625,
+          "timestamp": 1760103755.062009
+        },
+        {
+          "memory_mb": 360.703125,
+          "timestamp": 1760103765.158123
+        },
+        {
+          "memory_mb": 360.703125,
+          "timestamp": 1760103765.158559
+        },
+        {
+          "memory_mb": 360.84375,
+          "timestamp": 1760103772.9350212
+        },
+        {
+          "memory_mb": 360.84375,
+          "timestamp": 1760103772.935328
+        },
+        {
+          "memory_mb": 360.875,
+          "timestamp": 1760103780.283042
+        },
+        {
+          "memory_mb": 360.875,
+          "timestamp": 1760103780.283475
+        },
+        {
+          "memory_mb": 356.578125,
+          "timestamp": 1760103786.552707
+        },
+        {
+          "memory_mb": 356.578125,
+          "timestamp": 1760103786.552993
+        },
+        {
+          "memory_mb": 356.53125,
+          "timestamp": 1760103790.7509818
+        },
+        {
+          "memory_mb": 356.53125,
+          "timestamp": 1760103790.7512589
+        },
+        {
+          "memory_mb": 309.5,
+          "timestamp": 1760103794.704422
+        },
+        {
+          "memory_mb": 309.5,
+          "timestamp": 1760103794.70467
+        },
+        {
+          "memory_mb": 309.5625,
+          "timestamp": 1760103802.528579
+        },
+        {
+          "memory_mb": 309.5625,
+          "timestamp": 1760103802.528909
+        },
+        {
+          "memory_mb": 310.921875,
+          "timestamp": 1760103844.183622
+        },
+        {
+          "memory_mb": 310.921875,
+          "timestamp": 1760103844.183959
+        },
+        {
+          "memory_mb": 310.984375,
+          "timestamp": 1760103851.7327292
+        }
+      ],
+      "execution_times": [
+        10.095755100250244,
+        7.776228189468384,
+        7.3475611209869385,
+        6.268968105316162,
+        4.1977760791778564,
+        3.9530587196350098,
+        7.823579788208008,
+        41.654521226882935,
+        7.54843282699585
+      ],
+      "token_usage": {}
+    },
+    "metrics": {
+      "goal_satisfaction_rate": 0.0,
+      "makespan": 0.0,
+      "constraint_satisfaction_rate": 0.0,
+      "memory_usage": 360.875,
+      "execution_time": 77.74875219662984,
+      "token_usage": 0.0
+    }
+  }
+]

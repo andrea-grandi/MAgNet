@@ -1,0 +1,2 @@
+framework,task_id,execution_time,goal_satisfaction_rate,constraint_satisfaction_rate,makespan,memory_usage,token_usage,replanning_success_rate
+crewai,P11,22.585776329040527,0.0,0.0,0.0,309.6614583333333,0.0,0

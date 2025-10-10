@@ -1,0 +1,58 @@
+[
+  {
+    "task_id": "P11",
+    "framework": "crewai",
+    "execution_time": 22.576502243677776,
+    "achieved_goals": [
+      "minimize_makespan",
+      "balance_workload"
+    ],
+    "satisfied_constraints": [
+      "job_precedence",
+      "machine_capacity",
+      "deadline"
+    ],
+    "resource_usage": {
+      "memory_usage": [
+        {
+          "memory_mb": 340.921875,
+          "timestamp": 1760105437.946153
+        },
+        {
+          "memory_mb": 347.515625,
+          "timestamp": 1760105463.216442
+        },
+        {
+          "memory_mb": 347.515625,
+          "timestamp": 1760105463.2169862
+        },
+        {
+          "memory_mb": 347.96875,
+          "timestamp": 1760105482.525548
+        },
+        {
+          "memory_mb": 347.96875,
+          "timestamp": 1760105482.525904
+        },
+        {
+          "memory_mb": 348.8125,
+          "timestamp": 1760105505.675252
+        }
+      ],
+      "execution_times": [
+        25.269946813583374,
+        19.308416843414307,
+        23.149203062057495
+      ],
+      "token_usage": {}
+    },
+    "metrics": {
+      "goal_satisfaction_rate": 44.444444444444436,
+      "makespan": 0.0,
+      "constraint_satisfaction_rate": 0.0,
+      "memory_usage": 348.0989583333333,
+      "execution_time": 45.858625729878746,
+      "token_usage": 0.0
+    }
+  }
+]

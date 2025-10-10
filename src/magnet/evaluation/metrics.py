@@ -49,8 +49,15 @@ class BaseMetrics:
         self.results: List[MetricResult] = []
         self.start_time = time.time()
     
-    def add_result(self, metric_name: str, metric_type: MetricType, 
-                   value: float, unit: str, description: str, details: Optional[Dict[str, Any]] = None):
+    def add_result(
+        self,
+        metric_name: str, 
+        metric_type: MetricType, 
+        value: float, 
+        unit: str, 
+        description: str, 
+        details: Optional[Dict[str, Any]] = None
+    ):
         """Add a metric result"""
         result = MetricResult(
             metric_name=metric_name,
@@ -92,10 +99,12 @@ class BaseMetrics:
 class PlanningQualityMetrics(BaseMetrics):
     """Planning Quality (Accuracy) - Goal satisfaction metrics"""
     
-    def evaluate_goal_satisfaction(self, 
-                                 expected_goals: List[str],
-                                 achieved_goals: List[str],
-                                 goal_weights: Optional[Dict[str, float]] = None) -> MetricResult:
+    def evaluate_goal_satisfaction(
+        self, 
+        expected_goals: List[str],
+        achieved_goals: List[str],
+        goal_weights: Optional[Dict[str, float]] = None
+    ) -> MetricResult:
         """
         Evaluate goal satisfaction rate
         
@@ -135,9 +144,11 @@ class PlanningQualityMetrics(BaseMetrics):
             }
         )
     
-    def evaluate_plan_completeness(self, 
-                                 required_actions: List[str],
-                                 executed_actions: List[str]) -> MetricResult:
+    def evaluate_plan_completeness(
+        self, 
+        required_actions: List[str],
+        executed_actions: List[str]
+    ) -> MetricResult:
         """Evaluate plan completeness"""
         if not required_actions:
             return self.add_result(
@@ -163,9 +174,11 @@ class PlanningQualityMetrics(BaseMetrics):
 class PlanningOptimalityMetrics(BaseMetrics):
     """Planning Optimality (Makespan) - Cost/min-time schedule quality metrics"""
     
-    def evaluate_makespan(self, 
-                         schedule: List[Dict[str, Any]],
-                         optimal_makespan: Optional[float] = None) -> MetricResult:
+    def evaluate_makespan(
+        self, 
+        schedule: List[Dict[str, Any]],
+        optimal_makespan: Optional[float] = None
+    ) -> MetricResult:
         """
         Evaluate makespan (total completion time)
         
@@ -208,10 +221,12 @@ class PlanningOptimalityMetrics(BaseMetrics):
             details
         )
     
-    def evaluate_cost_efficiency(self, 
-                               actual_cost: float,
-                               optimal_cost: Optional[float] = None,
-                               budget: Optional[float] = None) -> MetricResult:
+    def evaluate_cost_efficiency(
+        self, 
+        actual_cost: float,
+        optimal_cost: Optional[float] = None,
+        budget: Optional[float] = None
+    ) -> MetricResult:
         """Evaluate cost efficiency"""
         details = {"actual_cost": actual_cost}
         
@@ -250,9 +265,11 @@ class PlanningOptimalityMetrics(BaseMetrics):
 class CoordinationEffectivenessMetrics(BaseMetrics):
     """Coordination Effectiveness - Temporal or resource-based inter-agent consistency metrics"""
     
-    def evaluate_temporal_consistency(self, 
-                                    agent_schedules: Dict[str, List[Dict[str, Any]]],
-                                    dependencies: List[Tuple[str, str]]) -> MetricResult:
+    def evaluate_temporal_consistency(
+        self, 
+        agent_schedules: Dict[str, List[Dict[str, Any]]],
+        dependencies: List[Tuple[str, str]]
+    ) -> MetricResult:
         """
         Evaluate temporal consistency between agents
         
@@ -290,9 +307,11 @@ class CoordinationEffectivenessMetrics(BaseMetrics):
             }
         )
     
-    def evaluate_resource_consistency(self, 
-                                    resource_usage: Dict[str, List[Dict[str, Any]]],
-                                    resource_capacity: Dict[str, float]) -> MetricResult:
+    def evaluate_resource_consistency(
+        self, 
+        resource_usage: Dict[str, List[Dict[str, Any]]],
+        resource_capacity: Dict[str, float]
+    ) -> MetricResult:
         """Evaluate resource usage consistency"""
         if not resource_usage:
             return self.add_result(
@@ -326,16 +345,26 @@ class CoordinationEffectivenessMetrics(BaseMetrics):
             }
         )
     
-    def _get_task_end_time(self, task_id: str, agent_schedules: Dict[str, List[Dict[str, Any]]]) -> float:
+    def _get_task_end_time(
+        self, 
+        task_id: str, 
+        agent_schedules: Dict[str, List[Dict[str, Any]]]
+    ) -> float:
         """Helper to get task end time"""
+
         for agent_id, schedule in agent_schedules.items():
             for task in schedule:
                 if task.get('task_id') == task_id:
                     return task.get('end_time', 0)
         return 0
     
-    def _get_task_start_time(self, task_id: str, agent_schedules: Dict[str, List[Dict[str, Any]]]) -> float:
+    def _get_task_start_time(
+        self, 
+        task_id: str, 
+        agent_schedules: Dict[str, List[Dict[str, Any]]]
+    ) -> float:
         """Helper to get task start time"""
+
         for agent_id, schedule in agent_schedules.items():
             for task in schedule:
                 if task.get('task_id') == task_id:
@@ -346,9 +375,11 @@ class CoordinationEffectivenessMetrics(BaseMetrics):
 class ConstraintSatisfactionMetrics(BaseMetrics):
     """Constraint Satisfaction Rate - Number/percent of constraints satisfied"""
     
-    def evaluate_constraint_satisfaction(self, 
-                                       constraints: List[Dict[str, Any]],
-                                       execution_results: Dict[str, Any]) -> MetricResult:
+    def evaluate_constraint_satisfaction(
+        self, 
+        constraints: List[Dict[str, Any]],
+        execution_results: Dict[str, Any]
+    ) -> MetricResult:
         """
         Evaluate constraint satisfaction rate
         
@@ -356,6 +387,7 @@ class ConstraintSatisfactionMetrics(BaseMetrics):
             constraints: List of constraint definitions
             execution_results: Results from plan execution
         """
+
         if not constraints:
             return self.add_result(
                 "constraint_satisfaction_rate", MetricType.CONSTRAINT_SATISFACTION,
@@ -457,10 +489,13 @@ class ConstraintSatisfactionMetrics(BaseMetrics):
 class ResourceUsageMetrics(BaseMetrics):
     """Resource Usage Rate - Utilization of capacity-constrained assets"""
     
-    def evaluate_memory_usage(self, 
-                            memory_usage: List[Dict[str, Any]],
-                            memory_limit: Optional[float] = None) -> MetricResult:
+    def evaluate_memory_usage(
+        self, 
+        memory_usage: List[Dict[str, Any]],
+        memory_limit: Optional[float] = None
+    ) -> MetricResult:
         """Evaluate memory usage patterns"""
+
         if not memory_usage:
             return self.add_result(
                 "memory_usage", MetricType.RESOURCE_USAGE,
@@ -495,10 +530,13 @@ class ResourceUsageMetrics(BaseMetrics):
             details
         )
     
-    def evaluate_time_usage(self, 
-                          execution_times: List[float],
-                          time_limit: Optional[float] = None) -> MetricResult:
+    def evaluate_time_usage(
+        self, 
+        execution_times: List[float],
+        time_limit: Optional[float] = None
+    ) -> MetricResult:
         """Evaluate time usage patterns"""
+
         if not execution_times:
             return self.add_result(
                 "time_usage", MetricType.RESOURCE_USAGE,
@@ -533,10 +571,13 @@ class ResourceUsageMetrics(BaseMetrics):
             details
         )
     
-    def evaluate_token_usage(self, 
-                           token_usage: Dict[str, int],
-                           token_limit: Optional[int] = None) -> MetricResult:
+    def evaluate_token_usage(
+        self, 
+        token_usage: Dict[str, int],
+        token_limit: Optional[int] = None
+    ) -> MetricResult:
         """Evaluate LLM token usage"""
+
         if not token_usage:
             return self.add_result(
                 "token_usage", MetricType.RESOURCE_USAGE,
@@ -573,9 +614,11 @@ class ResourceUsageMetrics(BaseMetrics):
 class AdaptationMetrics(BaseMetrics):
     """Adaptation to Disruption - Replanning success/convergence rate"""
     
-    def evaluate_replanning_success(self, 
-                                  disruptions: List[Dict[str, Any]],
-                                  replanning_results: List[Dict[str, Any]]) -> MetricResult:
+    def evaluate_replanning_success(
+        self, 
+        disruptions: List[Dict[str, Any]],
+        replanning_results: List[Dict[str, Any]]
+    ) -> MetricResult:
         """
         Evaluate replanning success rate
         
@@ -583,6 +626,7 @@ class AdaptationMetrics(BaseMetrics):
             disruptions: List of disruption events
             replanning_results: Results of replanning attempts
         """
+
         if not disruptions:
             return self.add_result(
                 "replanning_success_rate", MetricType.ADAPTATION,
@@ -621,10 +665,13 @@ class AdaptationMetrics(BaseMetrics):
             }
         )
     
-    def evaluate_convergence_rate(self, 
-                                replanning_iterations: List[Dict[str, Any]],
-                                convergence_threshold: float = 0.01) -> MetricResult:
+    def evaluate_convergence_rate(
+        self, 
+        replanning_iterations: List[Dict[str, Any]],
+        convergence_threshold: float = 0.01
+    ) -> MetricResult:
         """Evaluate convergence rate of replanning"""
+
         if not replanning_iterations or len(replanning_iterations) < 2:
             return self.add_result(
                 "convergence_rate", MetricType.ADAPTATION,
@@ -661,10 +708,13 @@ class AdaptationMetrics(BaseMetrics):
             }
         )
     
-    def evaluate_disruption_recovery_time(self, 
-                                        disruption_times: List[float],
-                                        recovery_times: List[float]) -> MetricResult:
+    def evaluate_disruption_recovery_time(
+        self, 
+        disruption_times: List[float],
+        recovery_times: List[float]
+    ) -> MetricResult:
         """Evaluate time to recover from disruptions"""
+        
         if not disruption_times or not recovery_times:
             return self.add_result(
                 "recovery_time", MetricType.ADAPTATION,

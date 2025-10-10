@@ -22,11 +22,12 @@ Options:
 import argparse
 import sys
 import os
+
 from typing import List, Dict
 
 # Add project paths
-project_root = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(project_root)
+#project_root = os.path.dirname(os.path.abspath(__file__))
+#sys.path.append(project_root)
 
 from src.magnet.evaluation.evaluator import BenchmarkEvaluator, EvaluationConfig
 from src.magnet.evaluation.framework_runners import get_framework_runners, create_mock_runner
@@ -141,7 +142,7 @@ def validate_config(args, available_frameworks: List[str], available_tasks: List
 def print_evaluation_info(config: EvaluationConfig, available_frameworks: List[str]):
     """Print evaluation configuration information"""
     print("=" * 60)
-    print("REALM-Bench Evaluation Configuration")
+    print("Evaluation Configuration")
     print("=" * 60)
     print(f"Frameworks to evaluate: {config.frameworks}")
     print(f"Tasks to evaluate: {config.tasks}")
@@ -158,13 +159,13 @@ def main():
     """Main evaluation function"""
     args = parse_arguments()
     
-    print("🚀 Starting REALM-Bench Evaluation")
+    print("🚀 Starting Evaluation")
     print("=" * 60)
     
     # Get available frameworks
     if args.mock:
         print("Using mock runners for testing...")
-        available_frameworks = ["langgraph"]
+        available_frameworks = ["langgraph", "crewai"]
         framework_runners = {
             framework: create_mock_runner(framework)
             for framework in available_frameworks

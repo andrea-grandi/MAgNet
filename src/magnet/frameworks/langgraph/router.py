@@ -1,8 +1,3 @@
-# Add project root to path
-#project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../..'))
-#if project_root not in sys.path:
-#    sys.path.insert(0, project_root)
-
 from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
@@ -56,6 +51,8 @@ def create_agent_graph():
 
 
 def run_agent(query):
+    """Run a SINGLE agent. For MULTIPLE agents, i need to create the structure (TODO)"""
+
     app = create_agent_graph()
 
     final_state = app.invoke(

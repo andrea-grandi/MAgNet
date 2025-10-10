@@ -29,7 +29,7 @@ from .task_definitions import TaskDefinition, TaskResult, TASK_DEFINITIONS
 @dataclass
 class EvaluationConfig:
     """Configuration for evaluation runs"""
-    frameworks: List[str] = field(default_factory=lambda: ["langgraph"])
+    frameworks: List[str] = field(default_factory=lambda: ["langgraph", "crewai"])
     tasks: List[str] = field(default_factory=lambda: list(TASK_DEFINITIONS.keys()))
     num_runs: int = 3
     timeout_seconds: int = 300

@@ -1,10 +1,8 @@
-import sys
-import os
 import time
 
 # Add project paths
-project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(project_root)
+#project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+#sys.path.append(project_root)
 
 from magnet.evaluation.evaluator import BenchmarkEvaluator, EvaluationConfig
 from magnet.evaluation.framework_runners import create_mock_runner
@@ -13,7 +11,7 @@ from magnet.evaluation.task_definitions import TASK_DEFINITIONS
 
 def run_simple_evaluation():
     """Run a simple evaluation with mock runners"""
-    print("🚀 REALM-Bench Evaluation Example")
+    print("🚀 Evaluation Example")
     print("=" * 50)
     
     # Create evaluation configuration
@@ -140,7 +138,7 @@ def demonstrate_metrics():
 
 def main():
     """Main example function"""
-    print("REALM-Bench Evaluation Framework Example")
+    print("Evaluation Framework Example")
     print("=" * 50)
     
     # Demonstrate task definition structure

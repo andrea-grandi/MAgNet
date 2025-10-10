@@ -1,0 +1,7 @@
+framework,task_id,execution_time,goal_satisfaction_rate,constraint_satisfaction_rate,makespan,memory_usage,token_usage,replanning_success_rate
+langgraph,P11,8.407114346822103,0.0,0.0,0.0,360.8072916666667,0.0,0
+langgraph,P1,4.807033697764079,0.0,0.0,0.0,360.875,0.0,0
+langgraph,P2,19.009445269902546,0.0,0.0,0.0,360.875,0.0,0
+crewai,P11,25.188725392023724,0.0,0.0,0.0,317.1666666666667,0.0,0
+crewai,P1,20.46749186515808,0.0,0.0,0.0,318.4895833333333,0.0,0
+crewai,P2,13.114477396011353,0.0,0.0,0.0,319.4114583333333,0.0,0
