@@ -1,7 +1,0 @@
-{
-    "dependencies": ["./logic"],
-    "graphs": {
-      "agent": "./logic/graph.py:graph"
-    },
-    "env": "../../../.env"
-  }

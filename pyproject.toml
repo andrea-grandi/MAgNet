@@ -6,10 +6,19 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "a2a-sdk[http-server]>=0.3.8",
+    "colorama>=0.4.6",
+    "gradio>=5.49.1",
+    "http-router>=5.0.8",
     "langchain>=0.3.27",
     "langchain-openai>=0.3.35",
     "langgraph>=0.6.8",
+    "matplotlib>=3.10.7",
+    "numpy>=2.3.3",
+    "phoenix>=0.9.1",
+    "psutil>=7.1.0",
     "python-dotenv>=1.1.1",
     "requests>=2.32.5",
+    "router>=0.1",
+    "seaborn>=0.13.2",
     "uvicorn>=0.37.0",
 ]
