@@ -8,6 +8,7 @@ dependencies = [
     "a2a-sdk[http-server]>=0.3.8",
     "colorama>=0.4.6",
     "crewai>=0.203.0",
+    "fastmcp>=2.12.4",
     "gradio>=5.49.1",
     "graphviz>=0.21",
     "http-router>=5.0.8",

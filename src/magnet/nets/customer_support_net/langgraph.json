@@ -1,0 +1,6 @@
+{
+    "dependencies": ["."],
+    "graphs": {
+      "agent": "./agent/customer_support.py:app"
+    }
+}

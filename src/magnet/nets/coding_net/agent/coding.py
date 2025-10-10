@@ -10,7 +10,7 @@ from magnet.swarm import create_handoff_tool, create_swarm
 
 load_dotenv()
 
-model = ChatOpenAI(model="gpt-4o-mini")
+model = ChatOpenAI(model="gpt-4o-mini") 
 
 # Mock data for tools
 RESERVATIONS = defaultdict(lambda: {"flight_info": {}, "hotel_info": {}})

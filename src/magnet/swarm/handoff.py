@@ -23,6 +23,7 @@ def _get_field(obj: Any, key: str) -> Any:
         The value of the specified field.
 
     """
+    
     if isinstance(obj, dict):
         return obj[key]
     if is_dataclass(obj) or isinstance(obj, BaseModel):
@@ -30,15 +31,13 @@ def _get_field(obj: Any, key: str) -> Any:
     msg = f"Unsupported type for state: {type(obj)}"
     raise TypeError(msg)
 
-
 WHITESPACE_RE = re.compile(r"\s+")
 METADATA_KEY_HANDOFF_DESTINATION = "__handoff_destination"
 
-
 def _normalize_agent_name(agent_name: str) -> str:
     """Normalize an agent name to be used inside the tool name."""
-    return WHITESPACE_RE.sub("_", agent_name.strip()).lower()
 
+    return WHITESPACE_RE.sub("_", agent_name.strip()).lower()
 
 def create_handoff_tool(
     *,
@@ -61,6 +60,7 @@ def create_handoff_tool(
             If not provided, the tool description will be `Ask agent <agent_name> for help`.
 
     """
+
     if name is None:
         name = f"transfer_to_{_normalize_agent_name(agent_name)}"
 
@@ -75,6 +75,7 @@ def create_handoff_tool(
         state: Annotated[Any, InjectedState],
         tool_call_id: Annotated[str, InjectedToolCallId],
     ) -> Command:
+        
         tool_message = ToolMessage(
             content=f"Successfully transferred to {agent_name}",
             name=name,
@@ -92,11 +93,11 @@ def create_handoff_tool(
     handoff_to_agent.metadata = {METADATA_KEY_HANDOFF_DESTINATION: agent_name}
     return handoff_to_agent
 
-
 def get_handoff_destinations(
     agent: CompiledStateGraph, tool_node_name: str = "tools"
 ) -> list[str]:
     """Get a list of destinations from agent's handoff tools."""
+
     nodes = agent.get_graph().nodes
     if tool_node_name not in nodes:
         return []

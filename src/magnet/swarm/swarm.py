@@ -27,6 +27,7 @@ def _update_state_schema_agent_names(
     agent_names: list[str],
 ) -> StateSchemaType:
     """Update the state schema to use Literal with agent names for 'active_agent'."""
+
     active_agent_annotation = state_schema.__annotations__["active_agent"]
 
     # Check if the annotation is str or Optional[str]
@@ -125,8 +126,9 @@ def add_active_agent_router(
             config,
         )
         ```
-
+        
     """
+
     channels = builder.schemas[builder.state_schema]
     if "active_agent" not in channels:
         msg = "Missing required key 'active_agent' in in builder's state_schema"
@@ -143,7 +145,6 @@ def add_active_agent_router(
 
     builder.add_conditional_edges(START, route_to_active_agent, path_map=route_to)
     return builder
-
 
 def create_swarm(  # noqa: D417
     agents: list[Pregel],
@@ -210,6 +211,7 @@ def create_swarm(  # noqa: D417
         ```
 
     """
+
     if (config_schema := deprecated_kwargs.get("config_schema")) is not None:
         warn(
             "`config_schema` is deprecated. Please use `context_schema` instead.",
