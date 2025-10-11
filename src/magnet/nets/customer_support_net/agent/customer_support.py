@@ -1,4 +1,5 @@
 import datetime
+
 from collections import defaultdict
 from typing import Callable
 from dotenv import load_dotenv
