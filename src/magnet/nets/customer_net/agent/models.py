@@ -3,6 +3,7 @@ import uuid
 from dataclasses import dataclass, field
 from typing import Optional
 from enum import Enum
+from pydantic import BaseModel, Field
 
 
 class LLMs(Enum):
@@ -17,6 +18,24 @@ class AgentRole(Enum):
     ORCHESTRATOR = "orchestrator"
     HOTEL_ASSISTANT = "hotel_assistant"
     FLIGHT_ASSISTANT = "flight_assistant"
+
+
+class FlightSearchInput(BaseModel):
+    """Input schema for flight search tool."""
+    
+    city: str = Field(description="The destination city to search flights for")
+    date: str = Field(description="The date for the flight in YYYY-MM-DD format")
+    time: Optional[str] = Field(default=None, description="Optional time for the flight")
+    include_details: bool = Field(default=False, description="Whether to include detailed flight information")
+
+
+class HotelSearchInput(BaseModel):
+    """Input schema for hotel search tool."""
+    location: str = Field(description="The location to search hotels in")
+    check_in: str = Field(description="Check-in date in YYYY-MM-DD format")
+    check_out: str = Field(description="Check-out date in YYYY-MM-DD format")
+    guests: int = Field(default=1, description="Number of guests")
+
 
 
 @dataclass

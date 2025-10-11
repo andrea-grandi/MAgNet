@@ -13,8 +13,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Export PORT
 EXPOSE 8787
 
-# Execute flight MCP
 CMD ["python", "-m", "src.server"]

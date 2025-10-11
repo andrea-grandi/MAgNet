@@ -14,7 +14,7 @@ HOTEL_MCP_URL = os.getenv("HOTEL_MCP_URL")
 
 
 class FlightMCPClient:
-    def __init__(self, configs: MCPClientConfig):
+    def __init__(self, configs: MCPClientConfig) -> None:
         self.server_url = configs.server_url 
         if not self.server_url:
             raise RuntimeError("FLIGHT_MCP_URL not defined in .env")
@@ -146,5 +146,5 @@ class HotelMCPClient:
 
 
 # Create singleton instances of the MCP clients
-flight_mcp_client = FlightMCPClient(FLIGHT_MCP_CONFIG)
-hotel_mcp_client = HotelMCPClient(HOTEL_MCP_CONFIG)
+FLIGHT_MCP_CLIENT = FlightMCPClient(FLIGHT_MCP_CONFIG)
+HOTEL_MCP_CLIENT = HotelMCPClient(HOTEL_MCP_CONFIG)

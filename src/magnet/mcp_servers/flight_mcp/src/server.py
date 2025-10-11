@@ -9,8 +9,8 @@ from .models import FlightInfoInput, FlightInfoOutput
 
 load_dotenv()
 
-HOST = os.getenv("MCP_HOST", "0.0.0.0")
-PORT = int(os.getenv("MCP_PORT", "8787"))
+HOST = os.getenv("MCP_HOST")
+PORT = int(os.getenv("MCP_PORT")) # type: ignore
 
 mcp = FastMCP(
     name="flight_mcp",
@@ -25,14 +25,17 @@ mcp = FastMCP(
 def specs(context: Context) -> dict:
     return {
         "provider": "FlightInfoAPI",
-        "inputs": {"flight_id": "str"}
+        "inputs": {
+            "city": "str",
+            "date": "str",
+            }
     }
 
 @mcp.tool
 async def get_flight_info_tool(context: Context, payload: FlightInfoInput) -> FlightInfoOutput:
     try:
         if not payload.city or not payload.date:
-            raise ToolError("City and date are required fields.")
+            raise ToolError("CITY and DATE are required fields.")
 
         out = await get_flight_info(payload)
 
@@ -56,4 +59,4 @@ def health_check() -> dict:
 
 
 if __name__ == "__main__":
-    mcp.run(transport="http", host=HOST, port=PORT, path="/mcp")
+    mcp.run(transport="streamable-http", host=HOST, port=PORT, path="/mcp", stateless_http=True)
