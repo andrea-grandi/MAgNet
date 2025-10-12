@@ -1,0 +1,45 @@
+# Example: Custom Configuration
+# Copy this file to create your own config
+
+ensemble:
+  num_agents: 100
+  model: "gpt-4o-mini"
+  base_temperature: 0.7
+  parallel_execution: true
+  max_concurrent: 20
+  timeout_seconds: 30
+  continue_on_error: true
+  min_successful_responses: 60
+
+diversification:
+  vary_temperature: true
+  temperature_range: [0.3, 1.0]
+  temperature_distribution: "uniform"
+  vary_top_p: true
+  top_p_range: [0.8, 1.0]
+  vary_prompts: false
+  prompt_variations: []
+
+aggregation:
+  method: "majority_vote"
+  majority_vote:
+    min_consensus: 60
+    similarity_method: "semantic"
+    similarity_threshold: 0.85
+    fallback_strategy: "meta_synthesis"
+  extract_confidence: true
+
+output:
+  format: "detailed"
+  include_metadata: true
+  log_individual_responses: true
+  log_file: "logs/ensemble_execution.log"
+
+performance:
+  enable_caching: true
+  cache_duration_seconds: 3600
+  early_stopping: true
+  early_stop_threshold: 0.9
+  early_stop_min_responses: 30
+  respect_rate_limits: true
+  requests_per_minute: 100

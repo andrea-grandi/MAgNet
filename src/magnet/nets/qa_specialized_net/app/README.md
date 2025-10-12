@@ -1,0 +1,1 @@
+# A2A architecture for having distributed way of istantiating agents

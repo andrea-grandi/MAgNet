@@ -1,5 +1,5 @@
 from langgraph_swarm import create_swarm
-from langgraph.checkpoint.memory import MemorySaver
+from langgraph.checkpoint.memory import InMemorySaver
 
 from .agents import flight_assistant, hotel_assistant, orchestrator
 
@@ -10,5 +10,5 @@ builder = create_swarm(
 )
 
 # Compile with checkpointer
-checkpointer = MemorySaver()
-app = builder.compile()
+checkpointer = InMemorySaver()
+app = builder.compile(checkpointer=checkpointer)
