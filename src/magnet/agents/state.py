@@ -1,19 +1,22 @@
-from typing import TypedDict, List, Dict
+from typing import TypedDict, List, Dict, Optional
 
 
 class AgentState(TypedDict):
     """State for the LangGraph agent."""
 
     role: str
-    mtype: str
-    qtype: str
-    question: str | None
-    contexts: List[Dict[str, str]]
-    reply: str | None
+    mtype: List[str]
+    qtype: List[str]
+    ans_parser: str
+    reply: Optional[str]
     answer: str
+    question: Optional[str]
+    llm_ip: Optional[str]
     prompt_tokens: int
     completion_tokens: int
-    temperature: float
-    top_p: int
     nums: int
-    llm_ip: str | None
+    temperature: float
+    top_p: float
+    model: str
+    
+    
