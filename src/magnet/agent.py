@@ -29,7 +29,7 @@ class Agent:
         return create_react_agent(
             name=self.name,
             model=self.model,
-            tools=self.tools,
+            tools=self.tools, # type: ignore
             prompt=self.prompt
         )
     
@@ -41,15 +41,13 @@ class Agent:
             if isinstance(tool, BaseTool):
                 handoff_tool.append(tool.name.split("_")[-1])
 
-        print(handoff_tool)
-
         agents = []
         for n in range(num):
             agents.append(
                 create_react_agent(
                     name=f"{self.name}_{n}",
                     model=self.model,
-                    tools=tools,
+                    tools=tools, # type: ignore
                     prompt=f"""{self.prompt}. 
                             "You are part of a swarm of {num} agents."
                             "You have to talk with other agents in your swarm."""

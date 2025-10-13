@@ -58,16 +58,16 @@ def main():
 
     agent = Agent(agent_name, llm, agent_prompt)
     tools_list = [tool.call] + [h for h in handoff_list]
-    agents = agent.create_multiple(num=num, tools=tools_list)
+    agents = agent.create_multiple(num=num, tools=tools_list) # type: ignore
 
     swarm = Swarm(agents, agents[random.randint(0,num-1)].name)
 
     workflow = swarm.create()
     app = workflow.compile()
 
-    image = app.get_graph().draw_mermaid_png()
-    with open("swarm.png", "wb") as f:
-        f.write(image)
+    #image = app.get_graph().draw_mermaid_png()
+    #with open("swarm.png", "wb") as f:
+    #    f.write(image)
 
     # Test the swarm
     print("\n🧪 Testing the swarm...")
@@ -114,7 +114,7 @@ def main():
             thread_id = f"thread_{hash(user_input)}"
             interactive_config = {"configurable": {"thread_id": thread_id}}
             
-            result = swarm.invoke(
+            result = swarm.invoke( # type: ignore
                 {"messages": [{"role": "user", "content": user_input}]},
                 interactive_config # type: ignore
             )

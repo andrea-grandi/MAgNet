@@ -32,7 +32,7 @@ class Handoff:
             handoffs.append(
                 create_handoff_tool(
                     agent_name=f"{agent_name}_{n}",
-                    description=description
+                    description=description # type: ignore
                 )   
             )
             

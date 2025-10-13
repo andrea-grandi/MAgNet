@@ -27,4 +27,4 @@ class Tool:
     def custom_call(self, request: str):
         r"""{self.docstring}"""
         
-        return self.func(request)
+        return self.func(request) # type: ignore

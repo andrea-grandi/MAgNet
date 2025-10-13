@@ -10,7 +10,7 @@ agents:
     with other agents by sharing insights and building upon their responses.
     When you receive input from another agent, acknowledge it and add your perspective.
     You have to handoff to some other agent (at least 1) to get their input or expertise."""
-  num: 3
+  num: 100
 
 tools:
   name: "matrix_multiplication"

@@ -19,7 +19,7 @@ class Swarm:
         """Build and return the swarm using the provided configuration."""
 
         return create_swarm(
-            agents=self.agents, 
+            agents=self.agents, # type: ignore
             default_active_agent=self.default_active_agent
         )
     
