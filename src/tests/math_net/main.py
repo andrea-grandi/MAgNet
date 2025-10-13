@@ -5,13 +5,13 @@ This script loads the configuration, creates the swarm, and visualizes the graph
 
 import sys
 import os
+import yaml
+import random
+
 from pathlib import Path
 from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
 from langgraph.checkpoint.memory import InMemorySaver
-from langgraph.prebuilt import create_react_agent
-from langgraph_swarm import create_handoff_tool, create_swarm
-import yaml
+from langchain_core.globals import set_debug, set_verbose
 
 # Add the magnet module to the path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
@@ -24,6 +24,9 @@ from magnet.swarm import Swarm
 # Load environment variables
 load_dotenv()
 
+set_debug(True)
+set_verbose(True)
+
 
 def load_config(config_path: str = "config.yaml") -> dict:
     """Load configuration from YAML file."""
@@ -31,101 +34,41 @@ def load_config(config_path: str = "config.yaml") -> dict:
         return yaml.safe_load(f)
 
 
-def create_tool_from_config(tool_config: dict, llm: ChatOpenAI):
-    """Create a tool function from configuration."""
-    def tool_func(input_text: str) -> str:
-        f"""{tool_config['docstring']}"""
-        request = tool_config['request'].format(response=input_text)
-        response = llm.invoke(request)
-        return response.content # type: ignore
-    
-    tool_func.__name__ = tool_config['name']
-    tool_func.__doc__ = tool_config['docstring']
-    return tool_func
-
-
 def main():
     print("🚀 Loading configuration...")
     config = load_config()
-    
+
+    llm = config["model"]["name"]
+    tool_name = config["tools"]["name"]
+    tool_docstring = config["tools"]["docstring"]
+    agent_name = config["agents"]["name"]
+    agent_prompt = config["agents"]["prompt"]
+    handoff_description = config["handoffs"]["description"]
+    num = config["agents"]["num"]
+
     # Initialize the model
     print(f"📊 Initializing model: {config['model']['name']}")
-    llm = ChatOpenAI(
-        model=config['model']['name'],
-        temperature=config['model']['temperature']
-    )
-    
-    # Create tools
-    print("🔧 Creating tools...")
-    tools_map = {}
-    for tool_config in config['tools']:
-        tool_func = create_tool_from_config(tool_config, llm)
-        tools_map[tool_config['name']] = tool_func
-    
-    # Create handoff tools
-    print("🤝 Creating handoff tools...")
-    handoff_tools = {}
-    for handoff_config in config['handoffs']:
-        handoff = Handoff(
-            agent_name=handoff_config['agent_name'],
-            description=handoff_config['description']
-        )
-        handoff_tools[handoff_config['agent_name']] = handoff.create()
-    
-    # Create agents
-    print(f"🤖 Creating {len(config['agents'])} cooperative agents...")
-    agents_list = []
-    
-    for agent_config in config['agents']:
-        agent_name = agent_config['name']
-        
-        # Collect tools for this agent
-        agent_tools = []
-        if 'tools' in agent_config:
-            for tool_name in agent_config['tools']:
-                if tool_name in tools_map:
-                    agent_tools.append(tools_map[tool_name])
-        
-        # Add handoff tools (all agents can hand off to any other agent)
-        for other_agent_name, handoff_tool in handoff_tools.items():
-            if other_agent_name != agent_name:  # Don't add self-handoff
-                agent_tools.append(handoff_tool)
-        
-        # Create the agent using langgraph directly
-        agent = create_react_agent(
-            model=llm,
-            tools=agent_tools,
-            name=agent_name,
-            prompt=agent_config['prompt']
-        )
-        
-        agents_list.append(agent)
-        print(f"  ✓ Created {agent_name}")
-    
-    # Create the swarm
-    print("\n🐝 Creating swarm...")
-    swarm_config = config['swarm']
-    checkpointer = InMemorySaver() if swarm_config.get('checkpointer') == 'memory' else None
-    
-    swarm_graph = create_swarm(
-        agents=agents_list,
-        default_active_agent=swarm_config['default_active_agent']
-    )
-    
-    swarm = swarm_graph.compile(checkpointer=checkpointer)
-    print(f"  ✓ Swarm created with default agent: {swarm_config['default_active_agent']}")
-    
-    # Generate and save the graph visualization
-    print("\n📸 Generating swarm graph visualization...")
-    try:
-        image = swarm.get_graph().draw_mermaid_png()
-        output_path = "swarm.png"
-        with open(output_path, "wb") as f:
-            f.write(image)
-        print(f"  ✓ Graph saved to: {output_path}")
-    except Exception as e:
-        print(f"  ⚠️  Error generating graph: {e}")
-    
+    model = Model(llm)
+    llm = model.gpt_4o_mini() 
+
+    tool = Tool(tool_name, tool_docstring, llm)
+
+    handoff = Handoff()
+    handoff_list = handoff.create_multiple(agent_name=agent_name, description=handoff_description, num=num)
+
+    agent = Agent(agent_name, llm, agent_prompt)
+    tools_list = [tool.call] + [h for h in handoff_list]
+    agents = agent.create_multiple(num=num, tools=tools_list)
+
+    swarm = Swarm(agents, agents[random.randint(0,num-1)].name)
+
+    workflow = swarm.create()
+    app = workflow.compile()
+
+    image = app.get_graph().draw_mermaid_png()
+    with open("swarm.png", "wb") as f:
+        f.write(image)
+
     # Test the swarm
     print("\n🧪 Testing the swarm...")
     test_config = {"configurable": {"thread_id": "test_thread_1"}}
@@ -135,7 +78,7 @@ def main():
     print("\n💬 Swarm response:\n")
     
     try:
-        result = swarm.invoke(
+        result = app.invoke(
             {"messages": [{"role": "user", "content": test_question}]},
             test_config # type: ignore
         )

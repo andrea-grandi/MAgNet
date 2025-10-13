@@ -1,7 +1,11 @@
-from typing import List, Optional, Any
+from typing import List, Optional, Any, Union
 from langgraph.prebuilt import create_react_agent
 from langgraph.graph.state import CompiledStateGraph
 from langgraph.prebuilt.chat_agent_executor import Prompt 
+from langchain_core.tools import BaseTool
+
+from magnet.tool import Tool
+from magnet.handoff import Handoff
 
 
 class Agent:
@@ -9,8 +13,8 @@ class Agent:
         self, 
         name: str, 
         model: Any, 
-        tools: List[Any], 
-        prompt: Optional[Prompt] = None
+        tools: Optional[List[Union[Tool, Handoff]]] = None, 
+        prompt: Optional[Prompt] = None,
     ) -> None:
         """Initialize an agent with the given parameters."""
 
@@ -28,3 +32,28 @@ class Agent:
             tools=self.tools,
             prompt=self.prompt
         )
+    
+    def create_multiple(self, num: int, tools: List[Union[Tool, Handoff]]) -> List[CompiledStateGraph]:
+        """Build and return multiple agent using the provided configuration."""
+        
+        handoff_tool = []
+        for tool in tools:
+            if isinstance(tool, BaseTool):
+                handoff_tool.append(tool.name.split("_")[-1])
+
+        print(handoff_tool)
+
+        agents = []
+        for n in range(num):
+            agents.append(
+                create_react_agent(
+                    name=f"{self.name}_{n}",
+                    model=self.model,
+                    tools=tools,
+                    prompt=f"""{self.prompt}. 
+                            "You are part of a swarm of {num} agents."
+                            "You have to talk with other agents in your swarm."""
+                )
+            )
+
+        return agents

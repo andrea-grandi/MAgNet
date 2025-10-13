@@ -1,158 +1,21 @@
-# Model Configuration
-model:
+model: 
   name: "gpt-4o-mini"
   temperature: 0.0
-  description: "Cooperative swarm model"
-  version: null
 
-# Agents Configuration - 10 Identical Cooperative Agents
-agents:
-  - name: "agent_1"
-    model_ref: "model"
-    prompt: |
-      You are Agent 1 in a cooperative swarm of 10 agents. Your goal is to collaborate
-      with other agents by sharing insights and building upon their responses.
-      When you receive input from another agent, acknowledge it and add your perspective.
-      You can hand off to any other agent to get their input or expertise.
-    tools:
-      - "share_response"
+agents: 
+  name: "math_agent"
+  tools: 
+  prompt: r"""
+    You are a math_agent in a cooperative swarm of {num} agents. Your goal is to collaborate
+    with other agents by sharing insights and building upon their responses.
+    When you receive input from another agent, acknowledge it and add your perspective.
+    You have to handoff to some other agent (at least 1) to get their input or expertise."""
+  num: 3
 
-  - name: "agent_2"
-    model_ref: "model"
-    prompt: |
-      You are Agent 2 in a cooperative swarm of 10 agents. Your goal is to collaborate
-      with other agents by sharing insights and building upon their responses.
-      When you receive input from another agent, acknowledge it and add your perspective.
-      You can hand off to any other agent to get their input or expertise.
-    tools:
-      - "share_response"
-
-  - name: "agent_3"
-    model_ref: "model"
-    prompt: |
-      You are Agent 3 in a cooperative swarm of 10 agents. Your goal is to collaborate
-      with other agents by sharing insights and building upon their responses.
-      When you receive input from another agent, acknowledge it and add your perspective.
-      You can hand off to any other agent to get their input or expertise.
-    tools:
-      - "share_response"
-
-  - name: "agent_4"
-    model_ref: "model"
-    prompt: |
-      You are Agent 4 in a cooperative swarm of 10 agents. Your goal is to collaborate
-      with other agents by sharing insights and building upon their responses.
-      When you receive input from another agent, acknowledge it and add your perspective.
-      You can hand off to any other agent to get their input or expertise.
-    tools:
-      - "share_response"
-
-  - name: "agent_5"
-    model_ref: "model"
-    prompt: |
-      You are Agent 5 in a cooperative swarm of 10 agents. Your goal is to collaborate
-      with other agents by sharing insights and building upon their responses.
-      When you receive input from another agent, acknowledge it and add your perspective.
-      You can hand off to any other agent to get their input or expertise.
-    tools:
-      - "share_response"
-
-  - name: "agent_6"
-    model_ref: "model"
-    prompt: |
-      You are Agent 6 in a cooperative swarm of 10 agents. Your goal is to collaborate
-      with other agents by sharing insights and building upon their responses.
-      When you receive input from another agent, acknowledge it and add your perspective.
-      You can hand off to any other agent to get their input or expertise.
-    tools:
-      - "share_response"
-
-  - name: "agent_7"
-    model_ref: "model"
-    prompt: |
-      You are Agent 7 in a cooperative swarm of 10 agents. Your goal is to collaborate
-      with other agents by sharing insights and building upon their responses.
-      When you receive input from another agent, acknowledge it and add your perspective.
-      You can hand off to any other agent to get their input or expertise.
-    tools:
-      - "share_response"
-
-  - name: "agent_8"
-    model_ref: "model"
-    prompt: |
-      You are Agent 8 in a cooperative swarm of 10 agents. Your goal is to collaborate
-      with other agents by sharing insights and building upon their responses.
-      When you receive input from another agent, acknowledge it and add your perspective.
-      You can hand off to any other agent to get their input or expertise.
-    tools:
-      - "share_response"
-
-  - name: "agent_9"
-    model_ref: "model"
-    prompt: |
-      You are Agent 9 in a cooperative swarm of 10 agents. Your goal is to collaborate
-      with other agents by sharing insights and building upon their responses.
-      When you receive input from another agent, acknowledge it and add your perspective.
-      You can hand off to any other agent to get their input or expertise.
-    tools:
-      - "share_response"
-
-  - name: "agent_10"
-    model_ref: "model"
-    prompt: |
-      You are Agent 10 in a cooperative swarm of 10 agents. Your goal is to collaborate
-      with other agents by sharing insights and building upon their responses.
-      When you receive input from another agent, acknowledge it and add your perspective.
-      You can hand off to any other agent to get their input or expertise.
-    tools:
-      - "share_response"
-
-# Tools Configuration
 tools:
-  - name: "share_response"
-    docstring: "Share your response with the swarm for collaborative processing"
-    model_ref: "model"
-    request: "Process and enhance this response from another agent: {response}"
+  name: "matrix_multiplication"
+  docstring: "Calculate the matrix multiplication given two matrices."
 
-# Handoffs Configuration - Each agent can hand off to any other agent
 handoffs:
-  - agent_name: "agent_1"
-    description: "Transfer to Agent 1 for additional perspective"
-
-  - agent_name: "agent_2"
-    description: "Transfer to Agent 2 for additional perspective"
-
-  - agent_name: "agent_3"
-    description: "Transfer to Agent 3 for additional perspective"
-
-  - agent_name: "agent_4"
-    description: "Transfer to Agent 4 for additional perspective"
-
-  - agent_name: "agent_5"
-    description: "Transfer to Agent 5 for additional perspective"
-
-  - agent_name: "agent_6"
-    description: "Transfer to Agent 6 for additional perspective"
-
-  - agent_name: "agent_7"
-    description: "Transfer to Agent 7 for additional perspective"
-
-  - agent_name: "agent_8"
-    description: "Transfer to Agent 8 for additional perspective"
-
-  - agent_name: "agent_9"
-    description: "Transfer to Agent 9 for additional perspective"
-
-  - agent_name: "agent_10"
-    description: "Transfer to Agent 10 for additional perspective"
-
-# Swarm Configuration
-swarm:
-  default_active_agent: "agent_1"
-  checkpointer: "memory" # Options: "memory", null
-
-# Runtime Configuration
-runtime:
-  max_iterations: 10
-  verbose: true
-  thread_id: "default_thread"
+  agent_name_ref: "agents"
+  description: "Transfer to math_agent_{n} for cooperation"

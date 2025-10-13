@@ -1,4 +1,4 @@
-from typing import Any, Union
+from typing import Any, Union, Optional
 
 
 class Tool:
@@ -7,24 +7,24 @@ class Tool:
         name: str, 
         docstring: str, 
         model: Any,
-        request: str
+        func: Optional[Any] = None
     ) -> None:
         """Initialize a tool with the given parameters."""
 
         self.name = name
         self.docstring = docstring
         self.model = model
-        self.request = request
+        self.func = func
 
     # Call the model with the tool's request
-    def call(self) -> Union[str, list[Union[str, dict]]]:
-        f"""{self.docstring}"""
+    def call(self, request: str):
+        r"""{self.docstring}"""
 
-        response = self.model.invoke(self.request)
+        response = self.model.invoke(request)
         return response.content
     
     # Custom call method to allow passing a function
-    def custom_call(self, func: Any) -> Any:
-        f"""{self.docstring}"""
+    def custom_call(self, request: str):
+        r"""{self.docstring}"""
         
-        return func(self.request)
+        return self.func(request)
