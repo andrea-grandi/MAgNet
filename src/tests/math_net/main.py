@@ -38,7 +38,7 @@ def main():
     print("🚀 Loading configuration...")
     config = load_config()
 
-    llm = config["model"]["name"]
+    model_name = config["model"]["name"]
     tool_name = config["tools"]["name"]
     tool_docstring = config["tools"]["docstring"]
     agent_name = config["agents"]["name"]
@@ -48,7 +48,7 @@ def main():
 
     # Initialize the model
     print(f"📊 Initializing model: {config['model']['name']}")
-    model = Model(llm)
+    model = Model(model_name)
     llm = model.gpt_4o_mini() 
 
     tool = Tool(tool_name, tool_docstring, llm)
@@ -56,18 +56,23 @@ def main():
     handoff = Handoff()
     handoff_list = handoff.create_multiple(agent_name=agent_name, description=handoff_description, num=num)
 
+    #agent = Agent(agent_name, llm, agent_prompt)
+    #tools_list = [tool.call]
+    #agents = agent.create(tools=tools_list) # type: ignore
+
     agent = Agent(agent_name, llm, agent_prompt)
     tools_list = [tool.call] + [h for h in handoff_list]
     agents = agent.create_multiple(num=num, tools=tools_list) # type: ignore
 
+    #swarm = Swarm(agents=agents, default_active_agent=agents[0].name) # type: ignore
     swarm = Swarm(agents, agents[random.randint(0,num-1)].name)
 
     workflow = swarm.create()
     app = workflow.compile()
 
-    #image = app.get_graph().draw_mermaid_png()
-    #with open("swarm.png", "wb") as f:
-    #    f.write(image)
+    image = app.get_graph().draw_mermaid_png()
+    with open("swarm.png", "wb") as f:
+        f.write(image)
 
     # Test the swarm
     print("\n🧪 Testing the swarm...")

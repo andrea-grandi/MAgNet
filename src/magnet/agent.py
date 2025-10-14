@@ -23,16 +23,19 @@ class Agent:
         self.tools = tools
         self.prompt = prompt
 
-    def create(self) -> CompiledStateGraph:
+    def create(self, tools: List[Union[Tool, Handoff]]) -> List[CompiledStateGraph]:
         """Build and return the agent using the provided configuration."""
 
-        return create_react_agent(
-            name=self.name,
-            model=self.model,
-            tools=self.tools, # type: ignore
-            prompt=self.prompt
+        agent = []
+        return agent.append(
+            create_react_agent(
+                name=self.name,
+                model=self.model,
+                tools=tools, # type: ignore
+                prompt=self.prompt
+            )
         )
-    
+
     def create_multiple(self, num: int, tools: List[Union[Tool, Handoff]]) -> List[CompiledStateGraph]:
         """Build and return multiple agent using the provided configuration."""
         

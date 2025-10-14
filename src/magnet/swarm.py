@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Union
 from langgraph.graph.state import StateGraph, CompiledStateGraph
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph_swarm import create_swarm
@@ -7,7 +7,7 @@ from langgraph_swarm import create_swarm
 class Swarm:
     def __init__(
         self, 
-        agents: List[CompiledStateGraph], 
+        agents: Union[List[CompiledStateGraph], CompiledStateGraph], 
         default_active_agent: str,
     ) -> None:
         """Initialize a swarm with the given parameters."""
