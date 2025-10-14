@@ -21,8 +21,8 @@ from magnet.custom import CooperativeAgentOrchestrator, CustomAgentConfig
 # Load environment variables
 load_dotenv()
 
-set_debug(True)
-set_verbose(True)
+set_debug(False)
+set_verbose(False)
 
 
 def load_config(config_path: str = "config.yaml") -> dict:
@@ -64,6 +64,7 @@ def main():
             num = 1
             min_before_final = 0
             randomize_order = False
+
         print("🛠 Using custom cooperative orchestrator (no tool calls, enforced turns)...")
         custom_orchestrator = CooperativeAgentOrchestrator(
             llm=llm,
@@ -81,9 +82,6 @@ def main():
     else:
         handoff = Handoff()
         handoff_list = handoff.create_multiple(agent_name=agent_name, description=handoff_description, num=num)
-        print("🔧 Handoff tools created:")
-        for h in handoff_list:
-            print(f"  - {getattr(h, 'name', '(unnamed)')}")
         agent = Agent(name=agent_name, model=llm, prompt=agent_prompt)
         tools_list = [h for h in handoff_list]
         agents = agent.create_multiple(num=num, tools=tools_list) # type: ignore
@@ -129,6 +127,7 @@ def main():
                 role = getattr(msg, 'name', None) or getattr(msg, 'role', 'AI')
                 print(f"[{role}] {msg.content}")
             print("-" * 80)
+
     except Exception as e:
         print(f"❌ Error during swarm invocation: {e}")
     

@@ -20,8 +20,7 @@ class Tool:
     def call(self, request: str):
         r"""{self.docstring}"""
 
-        response = self.model.invoke(request)
-        return response.content
+        return self.model.invoke(request).content
     
     # Custom call method to allow passing a function
     def custom_call(self, request: str):

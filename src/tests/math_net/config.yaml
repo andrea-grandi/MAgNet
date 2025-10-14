@@ -64,8 +64,8 @@ handoffs:
 
 swarm:
   use_custom: true
-  min_agents_before_final: 3
-  max_turns: 3
+  min_agents_before_final: 5
+  max_turns: 5
   max_chars_per_contribution: 2000
   log_dir: "logs"
   randomize_order: false

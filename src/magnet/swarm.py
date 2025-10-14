@@ -29,7 +29,7 @@ class Swarm:
 
         checkpointer = InMemorySaver() # short-term memory
         store = InMemoryStore() # long-term memory
-        swarm = self.create()
-        return swarm.compile(checkpointer=checkpointer, store=store)
+
+        return self.create().compile(checkpointer=checkpointer, store=store)
 
 
