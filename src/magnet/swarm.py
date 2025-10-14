@@ -1,6 +1,7 @@
 from typing import Any, List, Optional, Union
 from langgraph.graph.state import StateGraph, CompiledStateGraph
 from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.store.memory import InMemoryStore
 from langgraph_swarm import create_swarm
 
 
@@ -26,8 +27,9 @@ class Swarm:
     def compile(self) -> CompiledStateGraph:
         """Compile the swarm into a runnable state graph with optional checkpointing."""
 
-        checkpointer = InMemorySaver()
+        checkpointer = InMemorySaver() # short-term memory
+        store = InMemoryStore() # long-term memory
         swarm = self.create()
-        return swarm.compile(checkpointer=checkpointer)
+        return swarm.compile(checkpointer=checkpointer, store=store)
 
 

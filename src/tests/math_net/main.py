@@ -60,7 +60,7 @@ def main():
     #tools_list = [tool.call]
     #agents = agent.create(tools=tools_list) # type: ignore
 
-    agent = Agent(agent_name, llm, agent_prompt)
+    agent = Agent(name=agent_name, model=llm, prompt=agent_prompt)
     tools_list = [tool.call] + [h for h in handoff_list]
     agents = agent.create_multiple(num=num, tools=tools_list) # type: ignore
 

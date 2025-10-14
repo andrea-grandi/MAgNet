@@ -13,8 +13,8 @@ class Agent:
         self, 
         name: str, 
         model: Any, 
+        prompt: str,
         tools: Optional[List[Union[Tool, Handoff]]] = None, 
-        prompt: Optional[Prompt] = None,
     ) -> None:
         """Initialize an agent with the given parameters."""
 
@@ -23,7 +23,7 @@ class Agent:
         self.tools = tools
         self.prompt = prompt
 
-    def create(self, tools: List[Union[Tool, Handoff]]) -> List[CompiledStateGraph]:
+    def create(self, tools: List[Tool]) -> List[CompiledStateGraph]:
         """Build and return the agent using the provided configuration."""
 
         agent = []
@@ -39,21 +39,28 @@ class Agent:
     def create_multiple(self, num: int, tools: List[Union[Tool, Handoff]]) -> List[CompiledStateGraph]:
         """Build and return multiple agent using the provided configuration."""
         
-        handoff_tool = []
-        for tool in tools:
-            if isinstance(tool, BaseTool):
-                handoff_tool.append(tool.name.split("_")[-1])
-
         agents = []
         for n in range(num):
+            # Separate handoff tools from normal tools
+            handoff_tools = [tool for tool in tools if isinstance(tool, BaseTool)]
+            normal_tools = [tool for tool in tools if not isinstance(tool, BaseTool)]
+            
+            # Filter out self-handoff (agent cannot handoff to itself)
+            # This prevents math_agent_0 from having transfer_to_math_agent_0
+            filtered_handoff_tools = [
+                tool for tool in handoff_tools 
+                if tool.name != f"transfer_to_{self.name}_{n}"
+            ]
+            
+            # Combine filtered handoffs with normal tools
+            tools_for_agent = filtered_handoff_tools + normal_tools
+
             agents.append(
                 create_react_agent(
                     name=f"{self.name}_{n}",
                     model=self.model,
-                    tools=tools, # type: ignore
-                    prompt=f"""{self.prompt}. 
-                            "You are part of a swarm of {num} agents."
-                            "You have to talk with other agents in your swarm."""
+                    tools=tools_for_agent, # type: ignore
+                    prompt=self.prompt.format(num=num) if self.prompt else None
                 )
             )
 
