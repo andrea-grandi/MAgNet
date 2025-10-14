@@ -49,9 +49,9 @@ def main():
     # Initialize the model
     print(f"📊 Initializing model: {config['model']['name']}")
     model = Model(model_name)
-    llm = model.gpt_4o_mini() 
+    llm = model.gpt_4o_mini()
 
-    tool = Tool(tool_name, tool_docstring, llm)
+    #tool = Tool(tool_name, tool_docstring, llm)
 
     handoff = Handoff()
     handoff_list = handoff.create_multiple(agent_name=agent_name, description=handoff_description, num=num)
@@ -61,7 +61,8 @@ def main():
     #agents = agent.create(tools=tools_list) # type: ignore
 
     agent = Agent(name=agent_name, model=llm, prompt=agent_prompt)
-    tools_list = [tool.call] + [h for h in handoff_list]
+    #tools_list = [tool.call] + [h for h in handoff_list]
+    tools_list = [h for h in handoff_list]
     agents = agent.create_multiple(num=num, tools=tools_list) # type: ignore
 
     #swarm = Swarm(agents=agents, default_active_agent=agents[0].name) # type: ignore
@@ -70,14 +71,28 @@ def main():
     workflow = swarm.create()
     app = workflow.compile()
 
-    image = app.get_graph().draw_mermaid_png()
-    with open("swarm.png", "wb") as f:
-        f.write(image)
+    try: 
+        image = app.get_graph().draw_mermaid_png()
+        with open("swarm.png", "wb") as f:
+            f.write(image)
+    except Exception as e:
+        print(f"❌ Error generating graph image: {e}")
 
     # Test the swarm
     print("\n🧪 Testing the swarm...")
     test_config = {"configurable": {"thread_id": "test_thread_1"}}
-    test_question = "What are the benefits of cooperation in multi-agent systems?"
+    test_question = """Un razzo viene lanciato verticalmente da una piattaforma situata su un pianeta la cui gravità varia con l’altitudine secondo la legge: "
+    "g(h) = g0 / (1 + h/R)^2, dove g0 = 9.81 m/s^2 è l’accelerazione di gravità alla superficie, R = 6.4×10^6 m è il raggio del pianeta, "
+    "e h è l’altitudine in metri. Il razzo parte da fermo e subisce un’accelerazione costante dovuta al motore pari a am = 30 m/s^2 per 100 secondi, "
+    "dopodiché i motori si spengono e il razzo continua il moto fino al punto più alto, dove la sua velocità diventa zero. "
+    "Domande: (1) Deriva l’equazione differenziale del moto del razzo considerando la variazione della gravità con l’altitudine. "
+    "(2) Calcola la velocità del razzo dopo i primi 100 secondi. "
+    "(3) Determina l’altitudine massima h_max raggiunta dal razzo. "
+    "(4) Calcola la differenza di energia meccanica (cinetica + potenziale) tra la partenza e il punto più alto. "
+    "(5) Discuti come si potrebbe approssimare h_max con un’integrazione numerica (es. metodo di Runge-Kutta di ordine 4) e come 5 agenti potrebbero suddividere i compiti "
+    "per minimizzare l’errore numerico e migliorare la precisione del risultato. "
+    "Gli agenti devono collaborare per concordare una formulazione coerente delle equazioni, suddividere i calcoli e raggiungere un consenso finale sulla risposta corretta."""
+
     
     print(f"\n❓ Question: {test_question}")
     print("\n💬 Swarm response:\n")

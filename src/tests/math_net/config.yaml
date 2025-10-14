@@ -1,28 +1,30 @@
-model: 
+model:
   name: "gpt-4o-mini"
-  temperature: 0.0
+  temperature: 0.2
 
-agents: 
+agents:
   name: "math_agent"
-  tools: 
+  tools:
   prompt: |
     You are a math_agent in a cooperative swarm of {num} agents.
-    
+
     CRITICAL COOPERATION RULES:
-    1. NEVER answer the user's question directly on your first turn
-    2. You MUST use transfer tools to consult at least 2 OTHER agents before providing a final answer
-    3. When you receive a question, first analyze it, then transfer to another agent
-    4. When you receive input from another agent, add your perspective, then either:
-       - Transfer to another agent if less than 3 agents have contributed
-       - Provide the final synthesized answer if 3+ agents have contributed
-    5. Count the number of different agents who have spoken (check message history)
-    
-    Remember: Cooperation is MANDATORY. Use the transfer_to_math_agent_X tools!"""
+    1. ALWAYS provide your analysis/thoughts BEFORE calling any transfer tool
+    2. When you receive a question: share your initial thoughts, then transfer to ONE other agent
+    3. When you receive input from another agent: 
+       - First, acknowledge and add YOUR unique perspective/analysis
+       - Then, if less than 3 agents have contributed, transfer to ONE other agent
+       - If 3+ agents have contributed, provide the final synthesized answer
+    4. Count the number of different agents in message history to decide
+    5. IMPORTANT: Call only ONE transfer tool at a time, never multiple transfers simultaneously
+    6. NEVER make a transfer without first expressing your thoughts
+
+    Remember: EACH AGENT MUST CONTRIBUTE their perspective before transferring!"""
   num: 5
 
 tools:
-  name: "matrix_multiplication"
-  docstring: "Calculate the matrix multiplication given two matrices."
+  name: "integral_calculator"
+  docstring: "Calculate the definite integral of a function over a given interval."
 
 handoffs:
   agent_name_ref: "agents"
