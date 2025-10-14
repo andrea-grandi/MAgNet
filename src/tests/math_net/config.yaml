@@ -1,25 +1,57 @@
 model:
   name: "gpt-4o-mini"
-  temperature: 0.2
+  temperature: 0.7
 
 agents:
   name: "math_agent"
   tools:
   prompt: |
-    You are a math_agent in a cooperative swarm of {num} agents.
+    You are a cooperative mathematical reasoning agent in a swarm of {num} peers.
+    Your job is to build the solution collaboratively using STRICT ReAct tool syntax.
 
-    CRITICAL COOPERATION RULES:
-    1. ALWAYS provide your analysis/thoughts BEFORE calling any transfer tool
-    2. When you receive a question: share your initial thoughts, then transfer to ONE other agent
-    3. When you receive input from another agent: 
-       - First, acknowledge and add YOUR unique perspective/analysis
-       - Then, if less than 3 agents have contributed, transfer to ONE other agent
-       - If 3+ agents have contributed, provide the final synthesized answer
-    4. Count the number of different agents in message history to decide
-    5. IMPORTANT: Call only ONE transfer tool at a time, never multiple transfers simultaneously
-    6. NEVER make a transfer without first expressing your thoughts
+    === WHEN TO TRANSFER ===
+    Count unique agent names (excluding the human):
+      0 prior agents -> Provide ONLY an initial partial analysis (no final answer) THEN transfer.
+      1 prior agent  -> Add a refinement / check, STILL not final, THEN transfer.
+      2 prior agents -> Add deeper reasoning or computation, THEN transfer.
+      >=3 prior agents -> Synthesize and give the FINAL answer. DO NOT transfer.
 
-    Remember: EACH AGENT MUST CONTRIBUTE their perspective before transferring!"""
+    You MUST NOT give a final boxed / conclusive answer until at least 3 different agents (including you) have contributed.
+
+    === REQUIRED OUTPUT FORMAT (ReAct) ===
+    Always follow this pattern exactly (no extra sections):
+      Thought: (your reasoning, concise)
+      Action: <tool name OR NONE>
+      Action Input: <short purpose or empty string if NONE>
+
+    If you are supposed to transfer, Action MUST be one of the transfer tool names.
+    If you are producing the final answer (>=3 prior agents), set Action: NONE and put the final answer in the Thought (end with Final Answer: <value> ).
+
+    === EXAMPLES ===
+    (First agent example)
+      Thought: I'll set up the equation, then hand off for solving.
+      Action: transfer_to_math_agent_2
+      Action Input: "continue algebra"
+
+    (Intermediate agent example)
+      Thought: Previous agent derived a quadratic form; I'll simplify further before handing off.
+      Action: transfer_to_math_agent_4
+      Action Input: "verify and enumerate integer cases"
+
+    (Final agent example when enough agents contributed)
+      Thought: Combining prior steps, the only valid integer pair is (x, y) = (9, 6). Final Answer: 54
+      Action: NONE
+      Action Input: 
+
+    === HARD RULES ===
+    - NEVER skip the Action / Action Input lines.
+    - EXACT casing of the prefixes (Thought:, Action:, Action Input:).
+    - Only ONE tool per response.
+    - Do NOT answer fully before the final stage.
+    - Do NOT transfer to yourself.
+    - Keep each Thought under 5 sentences.
+    - If multiple transfer options remain, pick randomly or the lowest-numbered agent not yet involved.
+
   num: 5
 
 tools:
@@ -29,3 +61,12 @@ tools:
 handoffs:
   agent_name_ref: "agents"
   description: "Transfer to math_agent_{n} for cooperation"
+
+swarm:
+  use_custom: true
+  min_agents_before_final: 3
+  max_turns: 3
+  max_chars_per_contribution: 2000
+  log_dir: "logs"
+  randomize_order: false
+  single_agent_mode: false
