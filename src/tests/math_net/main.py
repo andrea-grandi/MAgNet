@@ -13,7 +13,7 @@ from langchain_core.globals import set_debug, set_verbose
 # Add the magnet module to the path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from magnet.model import Model
-from magnet.agent import Agent
+from magnet.agents.agent import Agent
 from magnet.handoff import Handoff
 from magnet.swarm import Swarm
 from magnet.custom import CooperativeAgentOrchestrator, CustomAgentConfig
