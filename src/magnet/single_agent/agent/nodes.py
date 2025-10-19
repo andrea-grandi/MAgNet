@@ -7,12 +7,12 @@ from dotenv import load_dotenv
 
 from .state import AgentState
 from .parser import Parser
-from .client import MCPClient
+from .client import CalculatorMCPClient
 
 load_dotenv()
 
 parser = Parser()
-caller = MCPClient()
+caller = CalculatorMCPClient()
 
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.7)
 prompt = ChatPromptTemplate.from_messages(
@@ -34,6 +34,8 @@ async def parse(state: AgentState) -> AgentState:
 
 async def call_mcp(state: AgentState) -> AgentState:
     """Calls the MCP backend with the request data."""
+    request = state.get("request", {}) or {}
+
 
     #TODO
     

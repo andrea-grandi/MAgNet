@@ -31,7 +31,7 @@ class Parser:
         if not getattr(ai_message, "tool_calls", None):
             return None
 
-        tool_call = ai_message.tool_calls[0]
+        tool_call = ai_message.tool_calls[0] #type: ignore
         if tool_call["name"] != AgentRequest.__name__:
             return None
 

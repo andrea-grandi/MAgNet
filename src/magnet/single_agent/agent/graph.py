@@ -27,4 +27,4 @@ def build_graph(mcp_server_url: str):
     return graph.compile()
 
 MCP_SERVER_URL = os.getenv("MCP_SERVER_URL")
-graph = build_graph(MCP_SERVER_URL)
+graph = build_graph(MCP_SERVER_URL) #type: ignore
