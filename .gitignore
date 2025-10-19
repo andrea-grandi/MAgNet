@@ -18,3 +18,6 @@ wheels/
 
 # VSCode
 .vscode
+
+# JetBrains IDEs
+.idea/
