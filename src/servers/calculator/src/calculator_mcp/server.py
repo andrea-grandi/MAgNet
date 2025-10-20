@@ -5,13 +5,13 @@ from fastmcp import FastMCP, Context
 from fastmcp.exceptions import ToolError
 from dotenv import load_dotenv
 
-from models import (
+from .models import (
     ArithmeticInput,
     ArithmeticOutput,
     StatisticsInput,
     StatisticsOutput
 )
-from logic import compute_arithmetic, compute_statistics
+from .logic import compute_arithmetic, compute_statistics
 
 logger = logging.getLogger(__name__)
 

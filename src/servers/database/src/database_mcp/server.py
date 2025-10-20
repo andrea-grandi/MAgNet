@@ -4,13 +4,13 @@ from dotenv import load_dotenv
 from fastmcp import FastMCP, Context
 from fastmcp.exceptions import ToolError
 
-from models import (
+from .models import (
     DBConnectionInput, 
     DBStatusOutput,
     DBQueryInput, 
     DBQueryOutput
 )
-from logic import check_connection, execute_query
+from .logic import check_connection, execute_query
 
 load_dotenv()
 

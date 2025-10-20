@@ -1,6 +1,6 @@
-import asyncio
-import os
+"""Translation Agent - Specialized in text translation and language detection."""
 
+import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
@@ -11,16 +11,16 @@ if load_dotenv():
 else:
     print("No .env file found")
 
-MCP_SERVER_URL = os.getenv("MCP_SERVER_URL", "http://localhost:8990/mcp")
+TRANSLATION_MCP_URL = os.getenv("TRANSLATION_MCP_URL", "http://localhost:8992/mcp")
 
-async def make_graph():
-    """Factory function to create the agent graph with MCP tools."""
+async def create_translation_agent():
+    """Create a translation specialized agent with translation MCP tools."""
     
     client = MultiServerMCPClient(
         {
-            "calculator": {
+            "translation": {
                 "transport": "streamable_http",
-                "url": MCP_SERVER_URL
+                "url": TRANSLATION_MCP_URL
             },
         }
     )
@@ -28,5 +28,5 @@ async def make_graph():
     tools = await client.get_tools()
     model = ChatOpenAI(name="gpt-4o-mini")
     agent = create_react_agent(model=model, tools=tools)
+    
     return agent
-

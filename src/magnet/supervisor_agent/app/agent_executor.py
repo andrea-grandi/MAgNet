@@ -1,0 +1,105 @@
+from typing import Optional, Any, cast
+from a2a.server.agent_execution import AgentExecutor, RequestContext
+from a2a.server.events import EventQueue
+from a2a.utils.errors import ServerError
+from a2a.types import Message, Part, TextPart, Role, InternalError
+import logging
+
+from app.agent import Agent
+
+logger = logging.getLogger(__name__)
+
+
+class Executor(AgentExecutor):
+    def __init__(self):
+        self.agent = Agent()
+        logger.info("Supervisor agent executor initialized")
+
+    async def execute(self, context: RequestContext, event_queue: EventQueue) -> None:
+        try:
+            """Execute the supervisor agent with the given context and event queue.
+            
+            The supervisor will route the request to the appropriate specialized agent.
+            """
+            
+            user_message = self._extract_user_message(context)
+            if not user_message:
+                raise ValueError("No user message found in request context")
+            
+            logger.info(f"Processing user request: {user_message[:100]}...")
+            
+            thread_id = context.task_id or "default"
+            logger.info(f"Calling agent.run() with thread_id: {thread_id}")
+            
+            try:
+                response = await self.agent.run(user_message, thread_id)
+                logger.info(f"Agent.run() completed successfully")
+            except Exception as agent_error:
+                logger.error(f"Error in agent.run(): {str(agent_error)}", exc_info=True)
+                raise
+            
+            logger.info(f"Generated response: {response[:100]}...")
+            
+            text_part = TextPart(text=response)
+            message = Message(
+                message_id="response",
+                role=Role.agent,
+                parts=cast(list[Part], [text_part])
+            )
+            
+            await event_queue.enqueue_event(message)
+
+        except Exception as e:
+            logger.error(f"Error executing supervisor agent: {str(e)}", exc_info=True)
+            raise ServerError(error=InternalError(message=str(e))) from e
+    
+    def _extract_user_message(self, context: RequestContext) -> Optional[str]:
+        """Extract the user message from the request context."""
+        
+        message = context.message
+        logger.debug(f"Message object: {message}")
+        
+        if not message:
+            logger.warning("No message in context")
+            return None
+            
+        if not message.parts:
+            logger.warning("No parts in message")
+            return None
+        
+        logger.debug(f"Message parts: {message.parts}")
+        logger.debug(f"Number of parts: {len(message.parts)}")
+        
+        # Part is a wrapper - need to access part.root to get the actual content
+        for idx, part in enumerate(message.parts):
+            logger.debug(f"Processing part {idx}: {part}")
+            logger.debug(f"Part type: {type(part)}")
+            logger.debug(f"Part repr: {repr(part)}")
+            
+            # Check if part is already a TextPart (without wrapper)
+            if isinstance(part, TextPart):
+                text = part.text
+                logger.info(f"Extracted text from TextPart directly: {text}")
+                return text
+            
+            # Check if part has a root attribute (wrapped)
+            if hasattr(part, 'root'):
+                logger.debug(f"Part has root: {part.root}")
+                logger.debug(f"Root type: {type(part.root)}")
+                
+                if isinstance(part.root, TextPart):
+                    text = part.root.text
+                    logger.info(f"Extracted text from Part.root: {text}")
+                    return text
+            
+            # Check if part is a dict (from JSON payload)
+            if isinstance(part, dict) and 'text' in part:
+                text = part['text']
+                logger.info(f"Extracted text from dict: {text}")
+                return text
+        
+        logger.warning("No text content found in any message parts")
+        return None
+        
+    async def cancel(self, context: RequestContext, event_queue: EventQueue) -> None:
+        return

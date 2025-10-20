@@ -1,6 +1,6 @@
-import asyncio
-import os
+"""Coding Agent - Specialized in code generation, review, and debugging."""
 
+import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
@@ -11,16 +11,16 @@ if load_dotenv():
 else:
     print("No .env file found")
 
-MCP_SERVER_URL = os.getenv("MCP_SERVER_URL", "http://localhost:8990/mcp")
+CODING_MCP_URL = os.getenv("CODING_MCP_URL", "http://localhost:8991/mcp")
 
-async def make_graph():
-    """Factory function to create the agent graph with MCP tools."""
+async def create_coding_agent():
+    """Create a coding specialized agent with coding MCP tools."""
     
     client = MultiServerMCPClient(
         {
-            "calculator": {
+            "coding": {
                 "transport": "streamable_http",
-                "url": MCP_SERVER_URL
+                "url": CODING_MCP_URL
             },
         }
     )
@@ -28,5 +28,5 @@ async def make_graph():
     tools = await client.get_tools()
     model = ChatOpenAI(name="gpt-4o-mini")
     agent = create_react_agent(model=model, tools=tools)
+    
     return agent
-
