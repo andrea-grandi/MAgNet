@@ -6,3 +6,4 @@ langchain-openai
 fastmcp
 a2a-sdk
 uvicorn
+langchain-mcp-adapters

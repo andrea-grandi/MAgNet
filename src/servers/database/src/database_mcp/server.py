@@ -4,17 +4,17 @@ from dotenv import load_dotenv
 from fastmcp import FastMCP, Context
 from fastmcp.exceptions import ToolError
 
-from .models import (
+from models import (
     DBConnectionInput, 
     DBStatusOutput,
     DBQueryInput, 
     DBQueryOutput
 )
-from .logic import check_connection, execute_query
+from logic import check_connection, execute_query
 
 load_dotenv()
 
-HOST = os.getenv("MCP_HOST", "0.0.0.0")
+HOST = os.getenv("MCP_HOST", "localhost")
 PORT = int(os.getenv("MCP_PORT", "8991"))
 
 mcp = FastMCP(

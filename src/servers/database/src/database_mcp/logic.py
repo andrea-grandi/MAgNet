@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.engine import Engine
 
-from .models import (
+from models import (
     DBConnectionInput, 
     DBStatusOutput, 
     DBQueryInput, 
