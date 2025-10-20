@@ -1,8 +1,8 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List
 
-#TODO
-class AgentRequest(BaseModel):
+
+class AgentInput(BaseModel):
     """Model for agent requests."""
 
 

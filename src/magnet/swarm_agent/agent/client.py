@@ -10,7 +10,7 @@ load_dotenv()
 MCP_SERVER_URL = os.getenv("MCP_SERVER_URL")
 
 
-class CalculatorMCPClient:
+class MCPClient:
     def __init__(self, base_url: Optional[str] = None, timeout: float = 30.0):
         self.base_url = base_url or MCP_SERVER_URL
         if not self.base_url:

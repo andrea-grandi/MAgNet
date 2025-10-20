@@ -12,7 +12,7 @@ class Parser:
     def __init__(self, model_name: str = "gpt-4o-mini", temperature: float = 0.2):
         llm = ChatOpenAI(model=model_name, temperature=temperature)
         self.llm_with_tools = llm.bind_tools([AgentRequest])
-        self.prompt = ChatPromptTemplate.from_messages([ #TODO
+        self.prompt = ChatPromptTemplate.from_messages([ 
             (
                 "system", 
                 """system prompt text here"""

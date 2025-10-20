@@ -10,10 +10,10 @@ class ArithmeticInput(BaseModel):
 
 
 class ArithmeticOutput(BaseModel):
-    result: float
-    confidence: float = Field(ge=0, le=1)
     api_version: str = "1"
     trace_id: Optional[str] = None
+    result: float
+    confidence: float = Field(ge=0, le=1)
 
 
 class StatisticsInput(BaseModel):
@@ -24,7 +24,7 @@ class StatisticsInput(BaseModel):
 
 
 class StatisticsOutput(BaseModel):
-    value: float
-    confidence: float = Field(ge=0, le=1)
     api_version: str = "1"
     trace_id: Optional[str] = None
+    value: float
+    confidence: float = Field(ge=0, le=1)

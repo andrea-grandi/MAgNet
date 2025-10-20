@@ -5,8 +5,10 @@ from fastmcp.exceptions import ToolError
 from dotenv import load_dotenv
 
 from .models import (
-    ArithmeticInput, ArithmeticOutput,
-    StatisticsInput, StatisticsOutput
+    ArithmeticInput, 
+    ArithmeticOutput,
+    StatisticsInput, 
+    StatisticsOutput
 )
 from .logic import compute_arithmetic, compute_statistics
 

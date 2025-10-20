@@ -5,8 +5,10 @@ from fastmcp import FastMCP, Context
 from fastmcp.exceptions import ToolError
 
 from .models import (
-    DBConnectionInput, DBStatusOutput,
-    DBQueryInput, DBQueryOutput
+    DBConnectionInput, 
+    DBStatusOutput,
+    DBQueryInput, 
+    DBQueryOutput
 )
 from .logic import check_connection, execute_query
 

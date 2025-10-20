@@ -1,8 +1,10 @@
 import statistics
 
 from .models import (
-    ArithmeticInput, ArithmeticOutput,
-    StatisticsInput, StatisticsOutput
+    ArithmeticInput, 
+    ArithmeticOutput,
+    StatisticsInput, 
+    StatisticsOutput
 )
 
 

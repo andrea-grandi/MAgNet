@@ -13,6 +13,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-EXPOSE 8990
+EXPOSE 8001
 
-CMD ["python", "-m", "src.calculator_mcp.server"]
+CMD ["python", "-m", "app"]

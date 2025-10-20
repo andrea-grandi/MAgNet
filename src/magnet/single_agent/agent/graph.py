@@ -19,7 +19,7 @@ def build_graph(mcp_server_url: str):
     graph.add_node("synthesize_response", nodes.synthesize_response)
 
     graph.set_entry_point("parse")
-
+    
     graph.add_edge("parse", "call_mcp")
     graph.add_edge("call_mcp", "synthesize_response")
     graph.add_edge("synthesize_response", END)

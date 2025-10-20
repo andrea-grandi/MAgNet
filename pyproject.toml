@@ -13,6 +13,7 @@ dependencies = [
     "graphviz>=0.21",
     "http-router>=5.0.8",
     "langchain>=0.3.27",
+    "langchain-mcp-adapters>=0.1.11",
     "langchain-openai>=0.3.35",
     "langgraph>=0.6.8",
     "langgraph-supervisor>=0.0.29",
