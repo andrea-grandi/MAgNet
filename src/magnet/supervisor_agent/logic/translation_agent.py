@@ -1,6 +1,5 @@
-"""Translation Agent - Specialized in text translation and language detection."""
-
 import os
+
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent

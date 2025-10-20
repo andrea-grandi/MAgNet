@@ -70,19 +70,16 @@ class Executor(AgentExecutor):
         logger.debug(f"Message parts: {message.parts}")
         logger.debug(f"Number of parts: {len(message.parts)}")
         
-        # Part is a wrapper - need to access part.root to get the actual content
         for idx, part in enumerate(message.parts):
             logger.debug(f"Processing part {idx}: {part}")
             logger.debug(f"Part type: {type(part)}")
             logger.debug(f"Part repr: {repr(part)}")
             
-            # Check if part is already a TextPart (without wrapper)
             if isinstance(part, TextPart):
                 text = part.text
                 logger.info(f"Extracted text from TextPart directly: {text}")
                 return text
             
-            # Check if part has a root attribute (wrapped)
             if hasattr(part, 'root'):
                 logger.debug(f"Part has root: {part.root}")
                 logger.debug(f"Root type: {type(part.root)}")
@@ -92,7 +89,6 @@ class Executor(AgentExecutor):
                     logger.info(f"Extracted text from Part.root: {text}")
                     return text
             
-            # Check if part is a dict (from JSON payload)
             if isinstance(part, dict) and 'text' in part:
                 text = part['text']
                 logger.info(f"Extracted text from dict: {text}")

@@ -1,6 +1,5 @@
-"""Coding Agent - Specialized in code generation, review, and debugging."""
-
 import os
+
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent

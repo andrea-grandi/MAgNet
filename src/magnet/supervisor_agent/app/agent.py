@@ -1,7 +1,7 @@
 from typing import Any, Dict
 from langchain_core.runnables import RunnableConfig
 from langchain_core.messages import HumanMessage
-from logic.agent import make_graph
+from logic.graph import make_graph
 
 
 class Agent:
@@ -31,22 +31,16 @@ class Agent:
         
         graph = await self._ensure_graph()
         
-        # LangGraph supervisor graph uses SupervisorState
-        # thread_id can be passed in the config for state persistence
         config: RunnableConfig = {"configurable": {"thread_id": thread_id}}
         
-        # Initialize with messages and next_agent (will be set by supervisor)
         result = await graph.ainvoke(
             {"messages": [HumanMessage(content=user_prompt)], "next_agent": "supervisor"},
             config=config
         )
         
-        # Extract the final response from the messages
         if "messages" in result and result["messages"]:
-            # Get all assistant/agent messages
             responses = []
             for message in result["messages"]:
-                # Skip user messages
                 if hasattr(message, "type") and message.type == "human":
                     continue
                     
@@ -59,7 +53,6 @@ class Agent:
                 if content:
                     responses.append(str(content))
             
-            # Return the last meaningful response
             if responses:
                 return responses[-1]
         

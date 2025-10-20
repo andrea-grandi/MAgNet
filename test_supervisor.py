@@ -12,7 +12,7 @@ async def test_a2a_connection():
     """Test A2A connection to supervisor agent."""
     import httpx
     
-    url = "http://localhost:8001/.well-known/agent.json"
+    url = "http://localhost:8001/.well-known/agent-card.json"
     
     print("Testing A2A connection...")
     try:

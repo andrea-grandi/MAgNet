@@ -1,6 +1,6 @@
 from typing import Any, Dict
 from langchain_core.runnables import RunnableConfig
-from logic.agent import make_graph
+from logic.graph import make_graph
 
 
 class Agent:

@@ -1,5 +1,4 @@
 services:
-  # Supervisor Agent - Main orchestrator
   supervisor-agent:
     build:
       context: ./src/magnet/supervisor_agent
@@ -36,6 +35,8 @@ services:
       - PYTHONUNBUFFERED=1
       - MCP_HOST=0.0.0.0
       - MCP_PORT=8990
+    healthcheck:
+      disable: false
     networks:
       - magnet-network
     restart: unless-stopped
@@ -53,7 +54,7 @@ services:
       - MCP_HOST=0.0.0.0
       - MCP_PORT=8991
     healthcheck:
-      disable: true
+      disable: false
     networks:
       - magnet-network
     restart: unless-stopped
@@ -71,7 +72,7 @@ services:
       - MCP_HOST=0.0.0.0
       - MCP_PORT=8992
     healthcheck:
-      disable: true
+      disable: false
     networks:
       - magnet-network
     restart: unless-stopped
