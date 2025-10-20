@@ -5,7 +5,10 @@ from dotenv import load_dotenv
 from typing import Optional, Dict, Any
 from fastmcp import Client 
 
-load_dotenv()
+if load_dotenv():
+    print("Loaded .env file")
+else:
+    print("No .env file found")
 
 MCP_SERVER_URL = os.getenv("MCP_SERVER_URL")
 

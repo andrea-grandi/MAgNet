@@ -1,6 +1,6 @@
 import statistics
 
-from .models import (
+from models import (
     ArithmeticInput, 
     ArithmeticOutput,
     StatisticsInput, 

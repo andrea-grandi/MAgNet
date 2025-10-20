@@ -1,20 +1,26 @@
 import os
+import logging
 
 from fastmcp import FastMCP, Context
 from fastmcp.exceptions import ToolError
 from dotenv import load_dotenv
 
-from .models import (
-    ArithmeticInput, 
+from models import (
+    ArithmeticInput,
     ArithmeticOutput,
-    StatisticsInput, 
+    StatisticsInput,
     StatisticsOutput
 )
-from .logic import compute_arithmetic, compute_statistics
+from logic import compute_arithmetic, compute_statistics
 
-load_dotenv()
+logger = logging.getLogger(__name__)
 
-HOST = os.getenv("MCP_HOST", "0.0.0.0")
+if load_dotenv():
+    print("Loaded .env file")
+else:
+    print("No .env file found")
+
+HOST = os.getenv("MCP_HOST", "localhost")
 PORT = int(os.getenv("MCP_PORT", "8990"))
 
 mcp = FastMCP(
@@ -24,7 +30,6 @@ mcp = FastMCP(
         "It supports addition, subtraction, multiplication, division, and statistical metrics such as mean, "
         "median, standard deviation, and variance."
     ),
-    stateless_http=True
 )
 
 
@@ -35,6 +40,7 @@ def arithmetic_tool(ctx: Context, req: ArithmeticInput) -> ArithmeticOutput:
     try:
         return compute_arithmetic(req)
     except Exception as e:
+        logger.info(f"Exception in compute arithmetic: {e}")
         raise ToolError(str(e))
 
 @mcp.tool
@@ -44,6 +50,7 @@ def statistics_tool(ctx: Context, req: StatisticsInput) -> StatisticsOutput:
     try:
         return compute_statistics(req)
     except Exception as e:
+        logger.info(f"Exception in compute statistics: {e}")
         raise ToolError(str(e))
 
 @mcp.tool
