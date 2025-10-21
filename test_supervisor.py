@@ -1,8 +1,3 @@
-"""Test script for MAgNet Supervisor Agent System.
-
-This script provides various tests for the multi-agent system.
-"""
-
 import asyncio
 import json
 from typing import Dict, Any
