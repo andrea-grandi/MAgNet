@@ -1,6 +1,7 @@
 from typing import Any, Dict
 from langchain_core.runnables import RunnableConfig
 from langchain_core.messages import HumanMessage
+
 from logic.graph import make_graph
 
 
@@ -10,7 +11,8 @@ class Agent:
         self._graph = None
     
     async def _ensure_graph(self):
-        """Ensure the graph is initialized (lazy initialization)."""
+        """Ensure the graph is initialized."""
+
         if self._graph is None:
             self._graph = await make_graph()
         return self._graph

@@ -1,4 +1,3 @@
-"""Business logic for coding operations."""
 
 from .models import (
     CodeGenerationInput,

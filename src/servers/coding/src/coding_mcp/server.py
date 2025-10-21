@@ -1,5 +1,3 @@
-"""FastMCP server for coding operations."""
-
 import os
 import logging
 

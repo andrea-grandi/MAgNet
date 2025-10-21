@@ -7,3 +7,5 @@ fastmcp
 a2a-sdk
 uvicorn
 langchain-mcp-adapters
+langchain-huggingface
+langchain-ollama

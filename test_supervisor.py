@@ -21,11 +21,11 @@ async def test_a2a_connection():
             if response.status_code == 200:
                 agent_card = response.json()
                 print("Agent card retrieved successfully!")
-                print(f"   Name: {agent_card.get('name')}")
-                print(f"   Description: {agent_card.get('description')}")
-                print(f"   Skills: {len(agent_card.get('skills', []))}")
+                print(f"Name: {agent_card.get('name')}")
+                print(f"Description: {agent_card.get('description')}")
+                print(f"Skills: {len(agent_card.get('skills', []))}")
                 for skill in agent_card.get('skills', []):
-                    print(f"      - {skill.get('name')}: {skill.get('description')}")
+                    print(f"- {skill.get('name')}: {skill.get('description')}")
                 return True
             else:
                 print(f"Failed to get agent card: {response.status_code}")
@@ -40,9 +40,9 @@ async def test_mcp_servers():
     import httpx
     
     servers = {
-        "Calculator MCP": "http://localhost:8990/mcp",
-        "Coding MCP": "http://localhost:8991/mcp",
-        "Translation MCP": "http://localhost:8992/mcp"
+        "Calculator MCP": "http://0.0.0.0:8990/mcp",
+        "Coding MCP": "http://0.0.0.0:8991/mcp",
+        "Translation MCP": "http://0.0.0.0:8992/mcp"
     }
     
     print("\nTesting MCP servers connectivity...")
@@ -87,7 +87,7 @@ async def send_task_to_agent(prompt: str, expected_agent: str | None = None):
         "id": str(uuid.uuid4()),
         "params": {
             "message": {
-                "messageId": str(uuid.uuid4()),  # Required field
+                "messageId": str(uuid.uuid4()),
                 "role": "user",
                 "parts": [
                     {
@@ -100,11 +100,10 @@ async def send_task_to_agent(prompt: str, expected_agent: str | None = None):
     
     print(f"\nSending task: {prompt}")
     if expected_agent:
-        print(f"   Expected to route to: {expected_agent}")
+        print(f"Expected to route to: {expected_agent}")
     
     try:
         async with httpx.AsyncClient(timeout=60.0) as client:
-            # Send message
             response = await client.post(url, json=payload)
             
             if response.status_code == 200:
@@ -115,14 +114,11 @@ async def send_task_to_agent(prompt: str, expected_agent: str | None = None):
                     print(f"Error: {result['error'].get('message', 'Unknown error')}")
                     return False
                 
-                # Extract response
                 response_data = result.get("result", {})
                 print(f"Response received!")
                 
-                # Try to extract message content
                 text_found = False
-                
-                # Check if parts is directly in response_data
+
                 if "parts" in response_data and response_data["parts"]:
                     for part in response_data["parts"]:
                         if isinstance(part, dict) and "text" in part:
@@ -171,7 +167,7 @@ async def test_math_tasks():
     print("="*60)
     
     tasks = [
-        "Calculate 25 + 17",
+        "Calculate the area of a circle with radius 7",
         "What is 144 divided by 12?",
         "Calculate the average of these numbers: 10, 20, 30, 40, 50",
     ]

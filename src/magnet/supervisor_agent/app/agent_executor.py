@@ -1,9 +1,10 @@
+import logging
+
 from typing import Optional, Any, cast
 from a2a.server.agent_execution import AgentExecutor, RequestContext
 from a2a.server.events import EventQueue
 from a2a.utils.errors import ServerError
 from a2a.types import Message, Part, TextPart, Role, InternalError
-import logging
 
 from app.agent import Agent
 

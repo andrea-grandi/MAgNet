@@ -1,5 +1,3 @@
-"""Business logic for translation operations."""
-
 from .models import (
     TranslateInput,
     TranslateOutput,

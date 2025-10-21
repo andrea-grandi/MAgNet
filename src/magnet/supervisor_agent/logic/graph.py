@@ -11,13 +11,17 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from .math_agent import create_math_agent
 from .coding_agent import create_coding_agent
 from .translation_agent import create_translation_agent
+from .model import get_model
 
 if load_dotenv():
     print("Loaded .env file")
 else:
     print("No .env file found")
 
-model = ChatOpenAI(name="gpt-4o-mini")
+SUPERVISOR_MODEL = get_model(os.getenv("SUPERVISOR_MODEL", "gpt-4o-mini"))
+MATH_MODEL = os.getenv("MATH_MODEL", "gpt-3.5-turbo")
+CODING_MODEL = os.getenv("CODING_MODEL", "gpt-3.5-turbo")
+TRANSLATION_MODEL = os.getenv("TRANSLATION_MODEL", "gpt-3.5-turbo")
 
 
 class SupervisorState(MessagesState):
@@ -53,7 +57,7 @@ async def supervisor_node(state: SupervisorState):
             """
     )
     
-    response = await model.ainvoke([system_message] + messages)
+    response = await SUPERVISOR_MODEL.ainvoke([system_message] + messages)
     
     content = str(response.content).upper() if response.content else ""
     
@@ -72,7 +76,7 @@ async def supervisor_node(state: SupervisorState):
 async def math_agent_node(state: SupervisorState):
     """Math agent node that handles mathematical tasks."""
     
-    agent = await create_math_agent()
+    agent = await create_math_agent(MATH_MODEL)
     result = await agent.ainvoke(state)
     
     return {
@@ -84,7 +88,7 @@ async def math_agent_node(state: SupervisorState):
 async def coding_agent_node(state: SupervisorState):
     """Coding agent node that handles programming tasks."""
 
-    agent = await create_coding_agent()
+    agent = await create_coding_agent(CODING_MODEL)
     result = await agent.ainvoke(state)
     
     return {
@@ -96,7 +100,7 @@ async def coding_agent_node(state: SupervisorState):
 async def translation_agent_node(state: SupervisorState):
     """Translation agent node that handles language tasks."""
     
-    agent = await create_translation_agent()
+    agent = await create_translation_agent(TRANSLATION_MODEL)
     result = await agent.ainvoke(state)
     
     return {
@@ -122,6 +126,7 @@ def route_after_supervisor(state: SupervisorState) -> Literal["math_agent", "cod
 
 def route_from_agent(state: SupervisorState) -> Literal["supervisor"]:
     """Always return to supervisor after agent completes."""
+
     return "supervisor"
 
 
@@ -153,6 +158,13 @@ async def make_graph():
     workflow.add_conditional_edges("translation_agent", route_from_agent)
     
     graph = workflow.compile()
-    
-    return graph
 
+    if graph is not None:
+        try:
+            image = graph.get_graph().draw_mermaid_png()
+            with open("../graph.png", "wb") as f:
+                f.write(image)
+        except Exception as e:
+            print(f"Error generating graph image: {e}")  
+
+    return graph

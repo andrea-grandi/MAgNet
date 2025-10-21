@@ -1,5 +1,3 @@
-"""Pydantic models for translation MCP server."""
-
 from pydantic import BaseModel, Field
 from typing import List, Optional
 
