@@ -1,6 +1,7 @@
 import os
 import json
 import uvicorn
+import logging
 
 from dotenv import load_dotenv
 from a2a.server.apps import A2AStarletteApplication
@@ -12,12 +13,15 @@ from app.agent_executor import Executor
 
 load_dotenv()
 
+logger = logging.getLogger(__name__)
+
 HOST = os.getenv("A2A_HOST", "localhost")
 PORT = int(os.getenv("A2A_PORT", "8001"))
 A2A_PUBLIC_URL = os.getenv("A2A_PUBLIC_URL", f"http://{HOST}:{PORT}")
 
 
 def main():
+    logger.info("Initializing MAgNet Supervisor Agent")
     skills = [
         AgentSkill(
             id="math_skill",
