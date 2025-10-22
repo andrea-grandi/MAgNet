@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
 from langchain_mcp_adapters.client import MultiServerMCPClient
+from langsmith import traceable
 
 from .model import get_model
 
@@ -14,6 +15,7 @@ else:
 
 MATH_MCP_URL = os.getenv("MATH_MCP_URL", "http://localhost:8990/mcp")
 
+@traceable(name="create_math_agent", tags=["math", "agent_creation", "mcp"])
 async def create_math_agent(model_name: str):
     """Create a math specialized agent with calculator MCP tools."""
     

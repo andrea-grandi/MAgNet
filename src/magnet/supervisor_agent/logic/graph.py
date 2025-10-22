@@ -7,6 +7,7 @@ from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph, MessagesState, START, END
 from langgraph.types import Command
 from langchain_core.messages import HumanMessage, SystemMessage
+from langsmith import traceable
 
 from .math_agent import create_math_agent
 from .coding_agent import create_coding_agent
@@ -30,10 +31,17 @@ class SupervisorState(MessagesState):
     next_agent: str
 
 
+@traceable(
+    name="supervisor_node",
+    tags=["supervisor", "routing"],
+    metadata={"node_type": "decision"}
+)
 async def supervisor_node(state: SupervisorState):
     """Supervisor that routes requests to specialized agents."""
     
     messages = state["messages"]
+    
+    print(f"\n[SUPERVISOR] Processing {len(messages)} messages")
     
     # Check if we already have an agent response (not just user message)
     # If the last message is from an agent/assistant, the task is complete
@@ -41,6 +49,7 @@ async def supervisor_node(state: SupervisorState):
         last_message = messages[-1]
         # Check if last message is from an agent (has tool calls or is assistant message)
         if hasattr(last_message, 'type') and last_message.type in ['ai', 'assistant']:
+            print(f"[SUPERVISOR] Task complete, finishing")
             return {"next_agent": "finish"}
     
     # System message for the supervisor
@@ -70,14 +79,24 @@ async def supervisor_node(state: SupervisorState):
     else:
         next_agent = "finish"
     
+    print(f"[SUPERVISOR] Routing decision: {next_agent}")
+    print(f"[SUPERVISOR] Based on response: {content[:100]}")
+    
     return {"next_agent": next_agent}
 
 
+@traceable(
+    name="math_agent_node",
+    tags=["math_agent", "specialized"],
+    metadata={"agent_type": "math", "mcp_server": "calculator"}
+)
 async def math_agent_node(state: SupervisorState):
     """Math agent node that handles mathematical tasks."""
     
+    print(f"\n[MATH AGENT] Starting math task processing")
     agent = await create_math_agent(MATH_MODEL)
     result = await agent.ainvoke(state)
+    print(f"[MATH AGENT] Task completed")
     
     return {
         "messages": result["messages"],
@@ -85,11 +104,18 @@ async def math_agent_node(state: SupervisorState):
     }
 
 
+@traceable(
+    name="coding_agent_node",
+    tags=["coding_agent", "specialized"],
+    metadata={"agent_type": "coding", "mcp_server": "coding"}
+)
 async def coding_agent_node(state: SupervisorState):
     """Coding agent node that handles programming tasks."""
 
+    print(f"\n[CODING AGENT] Starting coding task processing")
     agent = await create_coding_agent(CODING_MODEL)
     result = await agent.ainvoke(state)
+    print(f"[CODING AGENT] Task completed")
     
     return {
         "messages": result["messages"],
@@ -97,11 +123,18 @@ async def coding_agent_node(state: SupervisorState):
     }
 
 
+@traceable(
+    name="translation_agent_node",
+    tags=["translation_agent", "specialized"],
+    metadata={"agent_type": "translation", "mcp_server": "translation"}
+)
 async def translation_agent_node(state: SupervisorState):
     """Translation agent node that handles language tasks."""
     
+    print(f"\n[TRANSLATION AGENT] Starting translation task processing")
     agent = await create_translation_agent(TRANSLATION_MODEL)
     result = await agent.ainvoke(state)
+    print(f"[TRANSLATION AGENT] Task completed")
     
     return {
         "messages": result["messages"],
@@ -130,6 +163,7 @@ def route_from_agent(state: SupervisorState) -> Literal["supervisor"]:
     return "supervisor"
 
 
+@traceable(name="make_graph", tags=["graph_creation"])
 async def make_graph():
     """Factory function to create the supervisor multi-agent graph."""
     

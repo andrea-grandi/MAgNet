@@ -5,6 +5,7 @@ from a2a.server.agent_execution import AgentExecutor, RequestContext
 from a2a.server.events import EventQueue
 from a2a.utils.errors import ServerError
 from a2a.types import Message, Part, TextPart, Role, InternalError
+from langsmith import traceable
 
 from app.agent import Agent
 
@@ -16,6 +17,11 @@ class Executor(AgentExecutor):
         self.agent = Agent()
         logger.info("Supervisor agent executor initialized")
 
+    @traceable(
+        name="a2a_execute",
+        tags=["a2a", "protocol", "entry_point"],
+        metadata={"protocol": "a2a", "transport": "json-rpc"}
+    )
     async def execute(self, context: RequestContext, event_queue: EventQueue) -> None:
         try:
             """Execute the supervisor agent with the given context and event queue.
@@ -27,15 +33,19 @@ class Executor(AgentExecutor):
             if not user_message:
                 raise ValueError("No user message found in request context")
             
+            logger.info(f"[A2A] Received request: {user_message[:100]}...")
             logger.info(f"Processing user request: {user_message[:100]}...")
             
             thread_id = context.task_id or "default"
+            logger.info(f"[A2A] Thread ID: {thread_id}")
             logger.info(f"Calling agent.run() with thread_id: {thread_id}")
             
             try:
                 response = await self.agent.run(user_message, thread_id)
                 logger.info(f"Agent.run() completed successfully")
+                logger.info(f"[A2A] Response generated: {len(response)} characters")
             except Exception as agent_error:
+                logger.error(f"[A2A] Error in agent execution: {str(agent_error)}", exc_info=True)
                 logger.error(f"Error in agent.run(): {str(agent_error)}", exc_info=True)
                 raise
             
@@ -48,16 +58,21 @@ class Executor(AgentExecutor):
                 parts=cast(list[Part], [text_part])
             )
             
+            logger.info(f"[A2A] Sending response back to client")
             await event_queue.enqueue_event(message)
+            logger.info(f"[A2A] Request completed successfully")
 
         except Exception as e:
+            logger.error(f"[A2A] Fatal error in A2A execution: {str(e)}", exc_info=True)
             logger.error(f"Error executing supervisor agent: {str(e)}", exc_info=True)
             raise ServerError(error=InternalError(message=str(e))) from e
     
+    @traceable(name="extract_user_message", tags=["a2a", "parsing"])
     def _extract_user_message(self, context: RequestContext) -> Optional[str]:
         """Extract the user message from the request context."""
         
         message = context.message
+        logger.debug(f"[A2A] Parsing message object")
         logger.debug(f"Message object: {message}")
         
         if not message:

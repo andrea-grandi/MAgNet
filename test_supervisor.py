@@ -1,11 +1,16 @@
 import asyncio
 import json
+import os
 
 from typing import Dict, Any
+from dotenv import load_dotenv
 from langsmith import traceable
 from langsmith.wrappers import wrap_openai
 
+load_dotenv()
 
+
+@traceable(name="test_a2a_connection", tags=["test", "a2a", "connection"])
 async def test_a2a_connection():
     """Test A2A connection to supervisor agent."""
     import httpx
@@ -33,6 +38,7 @@ async def test_a2a_connection():
         return False
 
 
+@traceable(name="test_mcp_servers", tags=["test", "mcp", "health"])
 async def test_mcp_servers():
     """Test MCP server health checks."""
     import httpx
@@ -71,21 +77,32 @@ async def test_mcp_servers():
     return all_healthy
 
 
+@traceable(
+    name="send_a2a_task",
+    tags=["test", "task", "json-rpc", "a2a_protocol"],
+    metadata={"protocol": "a2a", "transport": "http"}
+)
 async def send_task_to_agent(prompt: str, expected_agent: str | None = None):
     """Send a task to the supervisor agent using JSON-RPC 2.0."""
     import httpx
     import uuid
+    from langsmith import get_current_run_tree
     
     url = "http://localhost:8001"
     
+    # Get current trace context
+    current_run = get_current_run_tree()
+    trace_id = current_run.trace_id if current_run else None
+    
     # JSON-RPC 2.0 format with message/send method
+    message_id = str(uuid.uuid4())
     payload = {
         "jsonrpc": "2.0",
         "method": "message/send",
         "id": str(uuid.uuid4()),
         "params": {
             "message": {
-                "messageId": str(uuid.uuid4()),
+                "messageId": message_id,
                 "role": "user",
                 "parts": [
                     {
@@ -96,23 +113,33 @@ async def send_task_to_agent(prompt: str, expected_agent: str | None = None):
         }
     }
     
-    print(f"\nSending task: {prompt}")
+    print(f"\n[A2A CLIENT] Sending task: {prompt}")
     if expected_agent:
-        print(f"Expected to route to: {expected_agent}")
+        print(f"[A2A CLIENT] Expected to route to: {expected_agent}")
+    if trace_id:
+        print(f"[A2A CLIENT] LangSmith Trace ID: {trace_id}")
     
     try:
         async with httpx.AsyncClient(timeout=60.0) as client:
+            print(f"[A2A CLIENT] Making HTTP POST to {url}")
+            print(f"[A2A CLIENT] Payload: message_id={message_id}, method={payload['method']}")
+            
             response = await client.post(url, json=payload)
+            
+            print(f"[A2A CLIENT] Received HTTP {response.status_code}")
             
             if response.status_code == 200:
                 result = response.json()
                 
                 # Check for JSON-RPC error
                 if "error" in result:
-                    print(f"Error: {result['error'].get('message', 'Unknown error')}")
+                    error_msg = result['error'].get('message', 'Unknown error')
+                    print(f"[A2A CLIENT] JSON-RPC Error: {error_msg}")
+                    print(f"Error: {error_msg}")
                     return False
                 
                 response_data = result.get("result", {})
+                print(f"[A2A CLIENT] Response received successfully")
                 print(f"Response received!")
                 
                 text_found = False
@@ -143,21 +170,27 @@ async def send_task_to_agent(prompt: str, expected_agent: str | None = None):
                                 break
                 
                 if not text_found:
+                    print(f"[A2A CLIENT] Could not extract text from response")
                     print(f"Could not extract text from response")
                     print(f"Response structure: {json.dumps(response_data, indent=2)[:500]}")
+                else:
+                    print(f"[A2A CLIENT] Task completed successfully")
                 
                 return True
             else:
+                print(f"[A2A CLIENT] HTTP error: {response.status_code}")
                 print(f"Failed: HTTP {response.status_code}")
                 print(f"{response.text[:200]}")
                 return False
                 
     except Exception as e:
+        print(f"[A2A CLIENT] Exception: {str(e)}")
         print(f"Error: {e}")
         return False
 
 
 
+@traceable(name="test_math_tasks", tags=["test", "math_agent", "integration"])
 async def test_math_tasks():
     """Test math-related tasks."""
     print("\n" + "="*60)
@@ -175,6 +208,7 @@ async def test_math_tasks():
         await asyncio.sleep(2)
 
 
+@traceable(name="test_coding_tasks", tags=["test", "coding_agent", "integration"])
 async def test_coding_tasks():
     """Test coding-related tasks."""
     print("\n" + "="*60)
@@ -192,6 +226,7 @@ async def test_coding_tasks():
         await asyncio.sleep(2)
 
 
+@traceable(name="test_translation_tasks", tags=["test", "translation_agent", "integration"])
 async def test_translation_tasks():
     """Test translation-related tasks."""
     print("\n" + "="*60)
@@ -209,9 +244,30 @@ async def test_translation_tasks():
         await asyncio.sleep(2)
 
 
+@traceable(
+    name="test_suite_main",
+    tags=["test", "suite", "supervisor_system"],
+    metadata={
+        "test_suite": "MAgNet Supervisor Agent System",
+        "version": "1.0.0"
+    }
+)
 async def main():
     """Run all tests."""
     print("MAgNet Supervisor Agent System Tests")
+    print("="*60)
+    
+    # Log LangSmith configuration
+    langsmith_key = os.getenv("LANGCHAIN_API_KEY")
+    langsmith_project = os.getenv("LANGCHAIN_PROJECT", "default")
+    
+    if langsmith_key:
+        print(f"\n✓ LangSmith tracking enabled")
+        print(f"  Project: {langsmith_project}")
+        print(f"  View traces at: https://smith.langchain.com/")
+    else:
+        print("\n⚠ LangSmith not configured (LANGCHAIN_API_KEY not set)")
+    
     print("="*60)
     
     # Test connections

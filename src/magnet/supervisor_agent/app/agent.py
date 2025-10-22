@@ -1,6 +1,7 @@
 from typing import Any, Dict
 from langchain_core.runnables import RunnableConfig
 from langchain_core.messages import HumanMessage
+from langsmith import traceable
 
 from logic.graph import make_graph
 
@@ -17,6 +18,7 @@ class Agent:
             self._graph = await make_graph()
         return self._graph
     
+    @traceable(name="agent_run", tags=["main", "supervisor_agent", "a2a"])
     async def run(self, user_prompt: str, thread_id: str) -> str:
         """Run the supervisor agent with the given user prompt and thread ID.
         
@@ -33,7 +35,17 @@ class Agent:
         
         graph = await self._ensure_graph()
         
-        config: RunnableConfig = {"configurable": {"thread_id": thread_id}}
+        config: RunnableConfig = {
+            "configurable": {"thread_id": thread_id},
+            "run_name": f"Supervisor-{thread_id}",
+            "metadata": {
+                "thread_id": thread_id,
+                "user_prompt": user_prompt[:100], 
+                "agent_type": "supervisor",
+                "protocol": "a2a"
+            },
+            "tags": ["supervisor", "a2a", "multi-agent"]
+        }
         
         result = await graph.ainvoke(
             {"messages": [HumanMessage(content=user_prompt)], "next_agent": "supervisor"},

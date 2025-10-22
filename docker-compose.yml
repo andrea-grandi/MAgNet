@@ -1,4 +1,5 @@
 services:
+  # Supervisor Agent Service
   supervisor-agent:
     build:
       context: ./src/magnet/supervisor_agent
@@ -15,6 +16,7 @@ services:
       - CODING_MCP_URL=http://coding-server:8991/mcp
       - TRANSLATION_MCP_URL=http://translation-server:8992/mcp
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - LANGCHAIN_API_KEY=${LANGCHAIN_API_KEY}
     depends_on:
       - calculator-server
       - coding-server
