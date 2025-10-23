@@ -1,8 +1,8 @@
 services:
-  # Supervisor Agent Service
+  # Supervisor Agent Service (orchestrates other agents via A2A)
   supervisor-agent:
     build:
-      context: ./src/magnet/supervisor_agent
+      context: ./src/magnet/supervisor_agent/supervisor
       dockerfile: Dockerfile
     container_name: supervisor-agent
     ports:
@@ -11,15 +11,81 @@ services:
       - PYTHONUNBUFFERED=1
       - A2A_HOST=0.0.0.0
       - A2A_PORT=8001
-      - A2A_PUBLIC_URL=http://localhost:8001
-      - MATH_MCP_URL=http://calculator-server:8990/mcp
-      - CODING_MCP_URL=http://coding-server:8991/mcp
-      - TRANSLATION_MCP_URL=http://translation-server:8992/mcp
+      - A2A_PUBLIC_URL=http://0.0.0.0:8001
+      - SUPERVISOR_MODEL=gpt-4o-mini
+      - CALCULATOR_A2A_URL=http://calculator-agent:8002
+      - CODER_A2A_URL=http://coder-agent:8003
+      - TRANSLATOR_A2A_URL=http://translator-agent:8004
       - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - LANGCHAIN_API_KEY=${LANGCHAIN_API_KEY}
+    depends_on:
+      - calculator-agent
+      - coder-agent
+      - translator-agent
+    networks:
+      - magnet-network
+    restart: unless-stopped
+
+  # Calculator Agent Service (math operations via MCP)
+  calculator-agent:
+    build:
+      context: ./src/magnet/supervisor_agent/calculator
+      dockerfile: Dockerfile
+    container_name: calculator-agent
+    ports:
+      - "8002:8002"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - A2A_HOST=0.0.0.0
+      - A2A_PORT=8002
+      - A2A_PUBLIC_URL=http://0.0.0.0:8002
+      - MATH_MODEL=gpt-4o-mini
+      - MATH_MCP_URL=http://calculator-server:8990/mcp
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
     depends_on:
       - calculator-server
+    networks:
+      - magnet-network
+    restart: unless-stopped
+
+  # Coder Agent Service (programming tasks via MCP)
+  coder-agent:
+    build:
+      context: ./src/magnet/supervisor_agent/coder
+      dockerfile: Dockerfile
+    container_name: coder-agent
+    ports:
+      - "8003:8003"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - A2A_HOST=0.0.0.0
+      - A2A_PORT=8003
+      - A2A_PUBLIC_URL=http://0.0.0.0:8003
+      - CODING_MODEL=gpt-4o-mini
+      - CODING_MCP_URL=http://coding-server:8991/mcp
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
       - coding-server
+    networks:
+      - magnet-network
+    restart: unless-stopped
+
+  # Translator Agent Service (translation tasks via MCP)
+  translator-agent:
+    build:
+      context: ./src/magnet/supervisor_agent/translator
+      dockerfile: Dockerfile
+    container_name: translator-agent
+    ports:
+      - "8004:8004"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - A2A_HOST=0.0.0.0
+      - A2A_PORT=8004
+      - A2A_PUBLIC_URL=http://0.0.0.0:8004
+      - TRANSLATION_MODEL=gpt-4o-mini
+      - TRANSLATION_MCP_URL=http://translation-server:8992/mcp
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
       - translation-server
     networks:
       - magnet-network

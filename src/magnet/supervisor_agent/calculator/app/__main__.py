@@ -1,6 +1,7 @@
 import os
 import json
 import uvicorn
+import logging
 
 from dotenv import load_dotenv
 from a2a.server.apps import A2AStarletteApplication
@@ -12,18 +13,22 @@ from app.agent_executor import Executor
 
 load_dotenv()
 
+logger = logging.getLogger(__name__)
+
 HOST = os.getenv("A2A_HOST", "localhost")
-PORT = int(os.getenv("A2A_PORT", "8001"))
+PORT = int(os.getenv("A2A_PORT", "8002"))
 A2A_PUBLIC_URL = os.getenv("A2A_PUBLIC_URL", f"http://{HOST}:{PORT}")
 
 
 def main():
+    logger.info("Initializing Math Agent")
+
     skills = [
         AgentSkill(
-            id="calculator_skill",
-            name="Calculator & Statistics",
-            description="Perform arithmetic operations and statistical calculations using MCP tools",
-            tags=["math", "calculator", "statistics", "mcp"],
+            id="math_skill",
+            name="Mathematics & Statistics",
+            description="Perform arithmetic operations and statistical calculations using specialized math agent with MCP calculator tools",
+            tags=["math", "calculator", "statistics", "arithmetic", "mcp"],
             examples=[
                 json.dumps({
                     "type": "text",
@@ -35,7 +40,7 @@ def main():
                 }),
                 json.dumps({
                     "type": "text",
-                    "content": "Multiply 3 by 12"
+                    "content": "Calculate the standard deviation of [5, 10, 15, 20, 25]"
                 }),
             ],
         )
@@ -43,8 +48,8 @@ def main():
 
     agent_card = AgentCard(
         protocol_version="0.3.0",
-        name="MCP Swarm Agent",
-        description="A LangGraph agent that uses Model Context Protocol (MCP) tools for mathematical operations",
+        name="Math Agent",
+        description="A math expert that can solve algebra and statistical problems using MCP servers.",
         url=A2A_PUBLIC_URL,
         version="1.0.0",
         capabilities=AgentCapabilities(streaming=True, push_notifications=False),

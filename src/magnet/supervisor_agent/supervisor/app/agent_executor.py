@@ -5,7 +5,6 @@ from a2a.server.agent_execution import AgentExecutor, RequestContext
 from a2a.server.events import EventQueue
 from a2a.utils.errors import ServerError
 from a2a.types import Message, Part, TextPart, Role, InternalError
-from langsmith import traceable
 
 from app.agent import Agent
 
@@ -17,11 +16,6 @@ class Executor(AgentExecutor):
         self.agent = Agent()
         logger.info("Supervisor agent executor initialized")
 
-    @traceable(
-        name="a2a_execute",
-        tags=["a2a", "protocol", "entry_point"],
-        metadata={"protocol": "a2a", "transport": "json-rpc"}
-    )
     async def execute(self, context: RequestContext, event_queue: EventQueue) -> None:
         try:
             """Execute the supervisor agent with the given context and event queue.
@@ -67,7 +61,6 @@ class Executor(AgentExecutor):
             logger.error(f"Error executing supervisor agent: {str(e)}", exc_info=True)
             raise ServerError(error=InternalError(message=str(e))) from e
     
-    @traceable(name="extract_user_message", tags=["a2a", "parsing"])
     def _extract_user_message(self, context: RequestContext) -> Optional[str]:
         """Extract the user message from the request context."""
         

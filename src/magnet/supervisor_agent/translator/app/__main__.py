@@ -1,6 +1,7 @@
 import os
 import json
 import uvicorn
+import logging
 
 from dotenv import load_dotenv
 from a2a.server.apps import A2AStarletteApplication
@@ -12,30 +13,34 @@ from app.agent_executor import Executor
 
 load_dotenv()
 
+logger = logging.getLogger(__name__)
+
 HOST = os.getenv("A2A_HOST", "localhost")
-PORT = int(os.getenv("A2A_PORT", "8001"))
+PORT = int(os.getenv("A2A_PORT", "8004"))
 A2A_PUBLIC_URL = os.getenv("A2A_PUBLIC_URL", f"http://{HOST}:{PORT}")
 
 
 def main():
+    logger.info("Initializing Translator Agent")
+
     skills = [
         AgentSkill(
-            id="calculator_skill",
-            name="Calculator & Statistics",
-            description="Perform arithmetic operations and statistical calculations using MCP tools",
-            tags=["math", "calculator", "statistics", "mcp"],
+            id="translation_skill",
+            name="Language Translation",
+            description="Translate text between languages and detect languages using specialized translation agent capabilities.",
+            tags=["translation", "language", "multilingual", "localization", "mcp"],
             examples=[
                 json.dumps({
                     "type": "text",
-                    "content": "Calculate 15 + 27"
-                }),
-                json.dumps({
-                    "type": "text", 
-                    "content": "What is the average of 10, 20, 30, 40, 50?"
+                    "content": "Translate 'hello world' to Italian"
                 }),
                 json.dumps({
                     "type": "text",
-                    "content": "Multiply 3 by 12"
+                    "content": "What language is 'bonjour' in?"
+                }),
+                json.dumps({
+                    "type": "text",
+                    "content": "Translate this text from Spanish to English: 'hola mundo'"
                 }),
             ],
         )
@@ -43,8 +48,8 @@ def main():
 
     agent_card = AgentCard(
         protocol_version="0.3.0",
-        name="MCP Swarm Agent",
-        description="A LangGraph agent that uses Model Context Protocol (MCP) tools for mathematical operations",
+        name="Translator Agent",
+        description="A translator agent that can translate any language in any other languange.",
         url=A2A_PUBLIC_URL,
         version="1.0.0",
         capabilities=AgentCapabilities(streaming=True, push_notifications=False),

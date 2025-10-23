@@ -1,0 +1,61 @@
+services:  
+  supervisor-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: supervisor-agent
+    ports:
+      - "8001:8001"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - A2A_HOST=0.0.0.0
+      - A2A_PORT=8001
+      - A2A_PUBLIC_URL=http://0.0.0.0:8001
+      - SUPERVISOR_MODEL=gpt-4o-mini
+      - CALCULATOR_A2A_URL=http://calculator-agent:8002
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    networks:
+      - magnet-network
+    restart: unless-stopped
+
+  calculator-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: calculator-agent
+    ports:
+      - "8002:8002"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - A2A_HOST=0.0.0.0
+      - A2A_PORT=8002
+      - A2A_PUBLIC_URL=http://0.0.0.0:8002
+      - MATH_MODEL=gpt-4o-mini
+      - SUPERVISOR_A2A_URL=http://supervisor-agent:8001
+      - MATH_MCP_URL=http://calculator-server:8990/mcp
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
+      - calculator-server
+    networks:
+      - magnet-network
+    restart: unless-stopped
+
+  calculator-server:
+    build:
+      context:  ../../../../src/servers/calculator
+      dockerfile: Dockerfile
+    container_name: calculator-server
+    ports:
+      - "8990:8990"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MCP_HOST=0.0.0.0
+      - MCP_PORT=8990
+    networks:
+      - magnet-network
+    restart: unless-stopped
+
+
+networks:
+  magnet-network:
+    driver: bridge

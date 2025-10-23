@@ -1,0 +1,40 @@
+services:  
+  coder-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: coder-agent
+    ports:
+      - "8003:8003"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - A2A_HOST=0.0.0.0
+      - A2A_PORT=8003
+      - A2A_PUBLIC_URL=http://0.0.0.0:8003
+      - CODING_MODEL=gpt-4o-mini
+      - CODING_MCP_URL=http://coding-server:8991/mcp
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
+      - coding-server
+    networks:
+      - magnet-network
+    restart: unless-stopped
+
+  coding-server:
+    build:
+      context: ../../../../src/servers/coding
+      dockerfile: Dockerfile
+    container_name: coding-server
+    ports:
+      - "8991:8991"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MCP_HOST=0.0.0.0
+      - MCP_PORT=8991
+    networks:
+      - magnet-network
+    restart: unless-stopped
+
+networks:
+  magnet-network:
+    driver: bridge

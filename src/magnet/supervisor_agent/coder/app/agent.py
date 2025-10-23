@@ -1,29 +1,25 @@
 from typing import Any, Dict
 from langchain_core.runnables import RunnableConfig
 from langchain_core.messages import HumanMessage
-from langsmith import traceable
 
 from logic.graph import make_graph
 
 
 class Agent:
     def __init__(self):
-        """Initialize the supervisor agent. The graph will be created lazily on first use."""
+        """Initialize the coder agent. The graph will be created lazily on first use."""
         self._graph = None
     
     async def _ensure_graph(self):
         """Ensure the graph is initialized."""
-
         if self._graph is None:
             self._graph = await make_graph()
         return self._graph
     
-    @traceable(name="agent_run", tags=["main", "supervisor_agent", "a2a"])
     async def run(self, user_prompt: str, thread_id: str) -> str:
-        """Run the supervisor agent with the given user prompt and thread ID.
+        """Run the coder agent with the given user prompt and thread ID.
         
-        The supervisor will analyze the request and route it to the appropriate
-        specialized agent (Math, Coding, or Translation).
+        The coder agent handles code generation, review, debugging, and programming tasks using MCP tools.
         
         Args:
             user_prompt: The user's input message
@@ -37,18 +33,18 @@ class Agent:
         
         config: RunnableConfig = {
             "configurable": {"thread_id": thread_id},
-            "run_name": f"Supervisor-{thread_id}",
+            "run_name": f"Coder-{thread_id}",
             "metadata": {
                 "thread_id": thread_id,
                 "user_prompt": user_prompt[:100], 
-                "agent_type": "supervisor",
+                "agent_type": "coder",
                 "protocol": "a2a"
             },
-            "tags": ["supervisor", "a2a", "multi-agent"]
+            "tags": ["coder", "a2a", "coding", "mcp"]
         }
         
         result = await graph.ainvoke(
-            {"messages": [HumanMessage(content=user_prompt)], "next_agent": "supervisor"},
+            {"messages": [HumanMessage(content=user_prompt)]},
             config=config
         )
         

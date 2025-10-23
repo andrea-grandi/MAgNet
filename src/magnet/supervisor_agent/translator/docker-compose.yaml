@@ -1,0 +1,22 @@
+services:  
+  translator-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: translator-agent
+    ports:
+      - "8004:8004"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - A2A_HOST=0.0.0.0
+      - A2A_PORT=8004
+      - A2A_PUBLIC_URL=http://0.0.0.0:8004
+      - TRANSLATOR_MODEL=gpt-4o-mini
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    networks:
+      - magnet-network
+    restart: unless-stopped
+
+networks:
+  magnet-network:
+    driver: bridge

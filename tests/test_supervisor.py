@@ -10,7 +10,7 @@ from langsmith.wrappers import wrap_openai
 load_dotenv()
 
 
-@traceable(name="test_a2a_connection", tags=["test", "a2a", "connection"])
+#@traceable(name="test_a2a_connection", tags=["test", "a2a", "connection"])
 async def test_a2a_connection():
     """Test A2A connection to supervisor agent."""
     import httpx
@@ -38,7 +38,7 @@ async def test_a2a_connection():
         return False
 
 
-@traceable(name="test_mcp_servers", tags=["test", "mcp", "health"])
+#@traceable(name="test_mcp_servers", tags=["test", "mcp", "health"])
 async def test_mcp_servers():
     """Test MCP server health checks."""
     import httpx
@@ -55,10 +55,7 @@ async def test_mcp_servers():
     async with httpx.AsyncClient() as client:
         for name, url in servers.items():
             try:
-                # Try to access the MCP endpoint (should return method not allowed or similar)
                 response = await client.get(url, timeout=5.0)
-                # MCP endpoints typically return 405 for GET requests (expecting POST)
-                # or 200 with some info, or 406 (Not Acceptable)
                 if response.status_code in [200, 405, 406, 400]:
                     print(f"{name}: reachable")
                 else:
@@ -77,24 +74,23 @@ async def test_mcp_servers():
     return all_healthy
 
 
-@traceable(
-    name="send_a2a_task",
-    tags=["test", "task", "json-rpc", "a2a_protocol"],
-    metadata={"protocol": "a2a", "transport": "http"}
-)
+#@traceable(
+#    name="send_a2a_task",
+#    tags=["test", "task", "json-rpc", "a2a_protocol"],
+#    metadata={"protocol": "a2a", "transport": "http"}
+#)
 async def send_task_to_agent(prompt: str, expected_agent: str | None = None):
     """Send a task to the supervisor agent using JSON-RPC 2.0."""
     import httpx
     import uuid
-    from langsmith import get_current_run_tree
+    #from langsmith import get_current_run_tree
     
     url = "http://localhost:8001"
     
     # Get current trace context
-    current_run = get_current_run_tree()
-    trace_id = current_run.trace_id if current_run else None
-    
-    # JSON-RPC 2.0 format with message/send method
+    #current_run = get_current_run_tree()
+    #trace_id = current_run.trace_id if current_run else None
+
     message_id = str(uuid.uuid4())
     payload = {
         "jsonrpc": "2.0",
@@ -116,8 +112,8 @@ async def send_task_to_agent(prompt: str, expected_agent: str | None = None):
     print(f"\n[A2A CLIENT] Sending task: {prompt}")
     if expected_agent:
         print(f"[A2A CLIENT] Expected to route to: {expected_agent}")
-    if trace_id:
-        print(f"[A2A CLIENT] LangSmith Trace ID: {trace_id}")
+    #if trace_id:
+    #    print(f"[A2A CLIENT] LangSmith Trace ID: {trace_id}")
     
     try:
         async with httpx.AsyncClient(timeout=60.0) as client:
@@ -156,6 +152,7 @@ async def send_task_to_agent(prompt: str, expected_agent: str | None = None):
                             break
                 
                 # Fallback: check message.parts
+                # AI
                 if not text_found and "message" in response_data:
                     msg = response_data["message"]
                     if "parts" in msg and msg["parts"]:
@@ -190,7 +187,7 @@ async def send_task_to_agent(prompt: str, expected_agent: str | None = None):
 
 
 
-@traceable(name="test_math_tasks", tags=["test", "math_agent", "integration"])
+#@traceable(name="test_math_tasks", tags=["test", "math_agent", "integration"])
 async def test_math_tasks():
     """Test math-related tasks."""
     print("\n" + "="*60)
@@ -208,7 +205,7 @@ async def test_math_tasks():
         await asyncio.sleep(2)
 
 
-@traceable(name="test_coding_tasks", tags=["test", "coding_agent", "integration"])
+#@traceable(name="test_coding_tasks", tags=["test", "coding_agent", "integration"])
 async def test_coding_tasks():
     """Test coding-related tasks."""
     print("\n" + "="*60)
@@ -226,7 +223,7 @@ async def test_coding_tasks():
         await asyncio.sleep(2)
 
 
-@traceable(name="test_translation_tasks", tags=["test", "translation_agent", "integration"])
+#@traceable(name="test_translation_tasks", tags=["test", "translation_agent", "integration"])
 async def test_translation_tasks():
     """Test translation-related tasks."""
     print("\n" + "="*60)
@@ -244,29 +241,30 @@ async def test_translation_tasks():
         await asyncio.sleep(2)
 
 
-@traceable(
-    name="test_suite_main",
-    tags=["test", "suite", "supervisor_system"],
-    metadata={
-        "test_suite": "MAgNet Supervisor Agent System",
-        "version": "1.0.0"
-    }
-)
+#@traceable(
+#    name="test_suite_main",
+#    tags=["test", "suite", "supervisor_system"],
+#    metadata={
+#        "test_suite": "MAgNet Supervisor Agent System",
+#        "version": "1.0.0"
+#    }
+#)
 async def main():
     """Run all tests."""
     print("MAgNet Supervisor Agent System Tests")
     print("="*60)
     
     # Log LangSmith configuration
+    # AI
     langsmith_key = os.getenv("LANGCHAIN_API_KEY")
     langsmith_project = os.getenv("LANGCHAIN_PROJECT", "default")
     
     if langsmith_key:
-        print(f"\n✓ LangSmith tracking enabled")
-        print(f"  Project: {langsmith_project}")
-        print(f"  View traces at: https://smith.langchain.com/")
+        print(f"\nLangSmith tracking enabled")
+        print(f"Project: {langsmith_project}")
+        print(f"View traces at: https://smith.langchain.com/")
     else:
-        print("\n⚠ LangSmith not configured (LANGCHAIN_API_KEY not set)")
+        print("\nLangSmith not configured (LANGCHAIN_API_KEY not set)")
     
     print("="*60)
     
