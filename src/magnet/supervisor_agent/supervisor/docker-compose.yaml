@@ -10,9 +10,10 @@ services:
       - PYTHONUNBUFFERED=1
       - A2A_HOST=0.0.0.0
       - A2A_PORT=8001
-      - A2A_PUBLIC_URL=http://0.0.0.0:8001
+      - A2A_PUBLIC_URL=http://supervisor-agent:8001
       - SUPERVISOR_MODEL=gpt-4o-mini
       - CALCULATOR_A2A_URL=http://calculator-agent:8002
+      - TRANSLATOR_A2A_URL=http://translator-agent:8004
       - OPENAI_API_KEY=${OPENAI_API_KEY}
     networks:
       - magnet-network
@@ -20,7 +21,7 @@ services:
 
   calculator-agent:
     build:
-      context: .
+      context: ../calculator
       dockerfile: Dockerfile
     container_name: calculator-agent
     ports:
@@ -29,13 +30,32 @@ services:
       - PYTHONUNBUFFERED=1
       - A2A_HOST=0.0.0.0
       - A2A_PORT=8002
-      - A2A_PUBLIC_URL=http://0.0.0.0:8002
+      - A2A_PUBLIC_URL=http://calculator-agent:8002
       - MATH_MODEL=gpt-4o-mini
       - SUPERVISOR_A2A_URL=http://supervisor-agent:8001
       - MATH_MCP_URL=http://calculator-server:8990/mcp
       - OPENAI_API_KEY=${OPENAI_API_KEY}
     depends_on:
       - calculator-server
+    networks:
+      - magnet-network
+    restart: unless-stopped
+
+  translator-agent:
+    build:
+      context: ../translator
+      dockerfile: Dockerfile
+    container_name: translator-agent
+    ports:
+      - "8004:8004"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - A2A_HOST=0.0.0.0
+      - A2A_PORT=8004
+      - A2A_PUBLIC_URL=http://translator-agent:8004
+      - TRANSLATOR_MODEL=gpt-4o-mini
+      - SUPERVISOR_A2A_URL=http://supervisor-agent:8001
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
     networks:
       - magnet-network
     restart: unless-stopped
